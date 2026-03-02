@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Conheça a estrutura completa do Hotel Solar em Salinópolis. Piscinas, quartos, restaurante e muito mais com vista para a Praia do Atalaia.">
+    <title>Estrutura e Galeria | Hotel Solar</title>
+
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+
+    <style>
+        .hero--galeria {
+            background-image: url('assets/images/hero-galeria-bg.jpg');
+            /* Usando foto oficial */
+            min-height: 60vh;
+        }
+
+        .galeria {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+            background-color: var(--color-background);
+        }
+
+        .galeria__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .galeria__item {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+        }
+
+        .galeria__item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .img-align-bottom {
+            object-position: 50% 80%;
+        }
+
+        .galeria__item:hover img {
+            transform: scale(1.1);
+        }
+
+        .galeria__overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            color: var(--color-white);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .galeria__item:hover .galeria__overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .galeria__title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .cta-reservar {
+            padding: 5rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img">
+            </a>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <nav class="nav" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="index.html#inicio" class="nav__link">Início</a></li>
+                    <li class="nav__item"><a href="index.html#acomodacoes" class="nav__link">Acomodações</a></li>
+                    <li class="nav__item"><a href="experiencias.html" class="nav__link">Experiências</a></li>
+                    <li class="nav__item"><a href="#" class="nav__link active">Estrutura</a></li>
+                    <li class="nav__item"><a href="eventos.html" class="nav__link">Eventos</a></li>
+                </ul>
+                <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank"
+                    class="btn btn--primary nav__btn">Reservar Quarto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section Galeria -->
+        <section class="hero hero--galeria">
+            <div class="hero__overlay"></div>
+            <div class="container hero__container">
+                <div class="hero__content fade-up">
+                    <h1 class="hero__title">Nossa Estrutura</h1>
+                    <p class="hero__subtitle">Descubra os ambientes onde seus melhores momentos em Salinas vão
+                        acontecer.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Galeria de Fotos Oficial -->
+        <section class="section galeria">
+            <div class="container">
+                <div class="text-center fade-up">
+                    <h2 class="section-title" style="margin-bottom: 1rem;">O Charme Tropical</h2>
+                    <p style="color: var(--color-text-light); max-width: 600px; margin: 0 auto;">Oferecemos uma riqueza
+                        de detalhes, conforto premium e uma vista deslumbrante para a praia.</p>
+                </div>
+
+                <div class="galeria__grid">
+                    <!-- Item 1 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/externa-noturna-piscina.jpg" alt="Piscina e Externa"
+                            class="img-align-bottom">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Área da Piscina</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 100ms;">
+                        <img src="assets/images/quarto-loft.jpg" alt="Acomodação Principal - Loft">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Nossos Lofts</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 200ms;">
+                        <img src="assets/images/quarto-2.jpg" alt="Sacada do Quarto">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Sacadas com Vista</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/restaurante.jpg" alt="Restaurante do Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Restaurante</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 100ms;">
+                        <img src="assets/images/bar.jpg" alt="Bar e Lazer">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Bar da Piscina</h3>
+                        </div>
+                    </div>
+
+
+                    <!-- Item 7 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/cafe-da-manha.jpg" alt="Café da Manhã Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Café da Manhã Regional</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 8 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 100ms;">
+                        <img src="assets/images/sala-de-jogos.jpg" alt="Sala de Jogos Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Sala de Jogos</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 9 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 200ms;">
+                        <img src="assets/images/quadra.jpg" alt="Quadra Poliesportiva Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Quadra Poliesportiva</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 10 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/capela.jpg" alt="Capela de Casamentos">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Capela Histórica</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 11 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 100ms;">
+                        <img src="assets/images/hidromassagem.jpg" alt="Piscina de Hidromassagem e Ofurô"
+                            class="img-align-bottom">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Hidromassagem</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 12 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 200ms;">
+                        <img src="assets/images/parquinho.jpg" alt="Parque Infantil do Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Parque Infantil</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 13 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/trapiche-para-restaurante.jpg" alt="Trapiche - Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Trapiche para Restaurante</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 14 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 100ms;">
+                        <img src="assets/images/org__hotel-solar-8139cff958a5ab65.jpg" alt="Ambiente Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Espaço Aconchegante</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 15 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 200ms;">
+                        <img src="assets/images/org__hotel-solar-a53a0f2fb231ac31.jpg" alt="Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Cantinho do Descanso</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 16 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/org__hotel-solar-a93c90fc07dfd901.jpg" alt="Vista Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Área de Lazer</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 17 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 100ms;">
+                        <img src="assets/images/IMGL0839.JPG" alt="Estrutura Hotel Solar">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Hotel Solar</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 18 -->
+                    <div class="galeria__item fade-up" style="transition-delay: 200ms;">
+                        <img src="assets/images/hall.jpg" alt="Hall de Entrada">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Hall de Entrada</h3>
+                        </div>
+                    </div>
+
+                    <!-- Item 19 -->
+                    <div class="galeria__item fade-up">
+                        <img src="assets/images/restaurante-solar-73.jpg" alt="Restaurante Solar 73">
+                        <div class="galeria__overlay">
+                            <h3 class="galeria__title">Restaurante Solar 73</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Final -->
+        <section class="cta-reservar fade-up">
+            <div class="container">
+                <h2 style="color: var(--color-primary); margin-bottom: 2rem;">Venha viver essa experiência.</h2>
+                <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank"
+                    class="btn btn--primary" style="font-size: 1.2rem; padding: 1rem 3rem;">Ver Disponibilidade de
+                    Quartos</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer__container fade-up">
+            <div class="footer__col footer__intro">
+                <a href="index.html" class="logo" style="margin-bottom: 1.5rem; display: inline-block;">
+                    <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img"
+                        style="filter: brightness(0) invert(1);">
+                </a>
+                <p style="color: rgba(255,255,255,0.7); max-width: 300px; margin-bottom: 1.5rem;">O Encanto da Amazônia
+                    Atlântica. Uma experiência inesquecível em Salinópolis.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/hotelsolar?igsh=MXRndzdubzdoajJtcw%3D%3D&utm_source=qr"
+                        target="_blank" aria-label="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                        </svg>
+                    </a>
+                    <a href="https://www.facebook.com/search/top?q=hotel%20solar%20salin%C3%B3polis" target="_blank"
+                        aria-label="Facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V7.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                    </a>
+                    <a href="https://wa.me/5591981000800" target="_blank" aria-label="WhatsApp">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.8 5.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+
+
+            <div class="footer__col">
+                <h4 class="footer__title">Contato</h4>
+                <ul class="footer__list">
+                    <li>Avenida Atlântica, s/n - Salinópolis, PA</li>
+                    <li>(91) 981000800</li>
+                    <li>reserva@hotelsolar.tur.br</li>
+                    <li><a href="experiencias.html"
+                            style="color:var(--color-secondary); margin-top: 1rem; display:block;">Ver Experiências</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="footer__bottom">
+            <div class="container">
+                <p>&copy; 2026 Hotel Solar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/5591981000800" class="whatsapp-float" target="_blank"
+        aria-label="Falar com o Hotel Solar no WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.8 5.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+    </a>
+
+    <!-- JS -->
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
