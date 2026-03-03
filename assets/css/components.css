@@ -571,6 +571,9 @@
    ========================================== */
 .gastronomia {
     background-color: var(--color-surface);
+    overflow: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .gastronomia__container {
