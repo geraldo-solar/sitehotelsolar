@@ -653,6 +653,11 @@
     }
 }
 
+.card--gastro {
+    width: 100%;
+    min-width: 0;
+}
+
 .card--gastro .card__image {
     height: 350px;
 }
