@@ -624,14 +624,11 @@
 @media (max-width: 992px) {
     .gastronomia__container {
         grid-template-columns: 1fr;
-        gap: 2rem;
-        padding-left: 0;
-        padding-right: 0;
+        gap: 2.5rem;
     }
 
     .gastronomia .section-title {
         text-align: center;
-        padding: 0 1.5rem;
     }
 
     .gastronomia .section-title::after {
@@ -641,16 +638,14 @@
 
     .gastronomia__subtitle {
         text-align: center;
-        padding: 0 1.5rem;
     }
 
     .gastronomia p {
         text-align: center;
-        padding: 0 1.5rem;
     }
 
     .gastronomia__grid {
-        max-width: 500px;
+        max-width: 100%;
         margin: 0 auto;
     }
 }
@@ -695,35 +690,7 @@
     background: transparent;
 }
 
-@media (max-width: 992px) {
-    .gastronomia__container {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-
-    .gastronomia .section-title {
-        text-align: center;
-    }
-
-    .gastronomia .section-title::after {
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .gastronomia__subtitle {
-        text-align: center;
-    }
-
-    .gastronomia p {
-        text-align: center;
-    }
-
-    .gastronomia__grid {
-        grid-template-columns: 1fr;
-        max-width: 500px;
-        margin: 0 auto;
-    }
-}
+/* Bloco removido por redundancia com o superior */
 
 /* ==========================================
    Footer
