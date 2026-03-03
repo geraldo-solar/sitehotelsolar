@@ -74,8 +74,9 @@
 }
 
 .logo__img {
-    height: 60px;
-    /* Ajuste conforme necessidade */
+    height: 50px;
+    max-width: 100%;
+    object-fit: contain;
     width: auto;
     transition: filter var(--transition-normal);
 }
@@ -247,12 +248,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url('../images/sobre-hotel-aerea.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    /* Parallax effect */
+    overflow: hidden;
     color: var(--color-white);
+}
+
+.hero__video-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 0;
+    transform: translateX(-50%) translateY(-50%);
+    object-fit: cover;
 }
 
 .hero__overlay {
