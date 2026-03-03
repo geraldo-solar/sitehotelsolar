@@ -50,6 +50,12 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
 html {
     scroll-behavior: smooth;
     font-size: 16px;
@@ -60,7 +66,6 @@ body {
     color: var(--color-text-main);
     background-color: var(--color-background);
     line-height: 1.6;
-    overflow-x: hidden;
 }
 
 h1,
