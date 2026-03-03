@@ -251,8 +251,7 @@
     background-image: url('../images/sobre-hotel-aerea.jpg');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
-    /* Parallax effect */
+    background-attachment: scroll;
     color: var(--color-white);
 }
 
