@@ -121,17 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
             newsletterMessage.style.display = 'none';
 
             try {
-                const response = await fetch('https://api.brevo.com/v3/contacts', {
+                const response = await fetch('/api/subscribe', {
                     method: 'POST',
                     headers: {
-                        'accept': 'application/json',
-                        'api-key': 'SUA_CHAVE_API_BREVO_AQUI',
                         'content-type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email: emailValue,
-                        listIds: [10],
-                        updateEnabled: true
+                        email: emailValue
                     })
                 });
 
