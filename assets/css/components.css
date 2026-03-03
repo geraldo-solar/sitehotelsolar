@@ -248,31 +248,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    background-image: url('../images/sobre-hotel-aerea.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    /* Parallax effect */
     color: var(--color-white);
-}
-
-.hero__video-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    z-index: 0;
-    transform: translateX(-50%) translateY(-50%);
-    object-fit: cover;
-    pointer-events: none;
-}
-
-.hero__video-bg::-webkit-media-controls {
-    display: none !important;
-}
-
-.hero__video-bg::-webkit-media-controls-start-playback-button {
-    display: none !important;
-    -webkit-appearance: none;
 }
 
 .hero__overlay {
