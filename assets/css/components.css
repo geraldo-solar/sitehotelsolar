@@ -206,9 +206,11 @@
         background-color: var(--color-surface);
         flex-direction: column;
         justify-content: center;
-        padding: 5rem 2rem;
+        padding: 3rem 1.5rem;
         box-shadow: var(--shadow-lg);
         transition: right var(--transition-slow);
+        overflow-y: auto;
+        /* Allow scrolling if it still doesn't fit */
     }
 
     .nav.active {
@@ -223,9 +225,9 @@
 
     .nav__link {
         color: var(--color-text-main);
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         display: block;
-        padding: 1rem 0;
+        padding: 0.8rem 0;
     }
 
     .nav__link::after {
