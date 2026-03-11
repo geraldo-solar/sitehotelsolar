@@ -21,6 +21,69 @@
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <style>
+        .modal-gallery {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-gallery-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .modal-gallery-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-gallery-nav {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .modal-gallery-prev,
+        .modal-gallery-next {
+            cursor: pointer;
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+            padding: 10px 20px;
+            user-select: none;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin: 0 10px;
+        }
+
+        .gallery-counter {
+            color: white;
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        @media only screen and (max-width: 700px) {
+            .modal-gallery-content {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -36,7 +99,7 @@
                 <ul class="nav__list">
                     <li class="nav__item"><a href="#inicio" class="nav__link active">Início</a></li>
                     <li class="nav__item"><a href="#acomodacoes" class="nav__link">Acomodações</a></li>
-                    <li class="nav__item"><a href="#pacotes" class="nav__link">Pacotes</a></li>
+                    <li class="nav__item"><a href="pacotes.html" class="nav__link">Pacotes</a></li>
                     <li class="nav__item"><a href="#sobre" class="nav__link">O Hotel</a></li>
                     <li class="nav__item"><a href="experiencias.html" class="nav__link">Experiências</a></li>
                     <li class="nav__item"><a href="estrutura.html" class="nav__link">Estrutura</a></li>
@@ -343,66 +406,9 @@
         <section id="acomodacoes" class="section acomodacoes">
             <div class="container">
                 <h2 class="section-title fade-up">Acomodações</h2>
-                <div class="acomodacoes__grid">
-                    <!-- Lofts e Casal Room -->
-                    <div class="card fade-up">
-                        <div class="card__image">
-                            <img src="assets/images/quarto-loft.webp" alt="Quartos Loft e Casal" loading="lazy">
-                            <div class="card__badge">O Mais Procurado</div>
-                        </div>
-                        <div class="card__content">
-                            <h3 class="card__title" style="font-size: 1.4rem;">Lofts & Casal</h3>
-                            <p class="card__desc" style="margin-bottom: 1rem;">O refúgio perfeito para viagens a dois.
-                                Conforto com clima intimista, equipado com Smart TV, Frigobar e Ar Split.</p>
-                            <ul
-                                style="list-style: none; padding: 0; color: var(--color-primary); font-size: 0.9rem; font-weight: 500;">
-                                <li style="margin-bottom: 0.3rem;">✓ Cama de Casal Premium</li>
-                                <li style="margin-bottom: 0.3rem;">✓ Wi-Fi de Alta Velocidade</li>
-                                <li>✓ Vista para o mar</li>
-                                <!-- Cross item -->
-                                <li class="mb-3 text-lighter"><i class="fas fa-times text-danger mr-2"></i>Link de
-                                    pagamentos </li>
-                                <li class="mb-3 text-lighter"><i class="fas fa-times text-danger mr-2"></i>Motor de
-                                    Reservas Web</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Familia e Amigos Room -->
-                    <div class="card fade-up" style="transition-delay: 100ms;">
-                        <div class="card__image">
-                            <img src="apto quadruplo.webp" alt="Quartos Triplos e Quádruplos" loading="lazy">
-                        </div>
-                        <div class="card__content">
-                            <h3 class="card__title" style="font-size: 1.4rem;">Família & Amigos</h3>
-                            <p class="card__desc" style="margin-bottom: 1rem;">Nossos quartos Triplos e Quádruplos
-                                oferecem espaço amplo para todos relaxarem após aproveitar as praias.</p>
-                            <ul
-                                style="list-style: none; padding: 0; color: var(--color-primary); font-size: 0.9rem; font-weight: 500;">
-                                <li style="margin-bottom: 0.3rem;">✓ Camas de Solteiro/Casal Adicionais</li>
-                                <li style="margin-bottom: 0.3rem;">✓ Ar Condicionado Split</li>
-                                <li>✓ Frigobar Próprio</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Premium View Room -->
-                    <div class="card fade-up" style="transition-delay: 200ms;">
-                        <div class="card__image">
-                            <img src="assets/images/quarto-2.webp" alt="Suite Vista Mar e Varanda" loading="lazy">
-                            <div class="card__badge" style="background-color: var(--color-primary);">Vista Premium</div>
-                        </div>
-                        <div class="card__content">
-                            <h3 class="card__title" style="font-size: 1.4rem;">Varanda & Vista Mar</h3>
-                            <p class="card__desc" style="margin-bottom: 1rem;">A conexão completa com a natureza. Sinta
-                                a brisa amazônica nas acomodações Varanda Térreo ou Sacada Vista Mar.</p>
-                            <ul
-                                style="list-style: none; padding: 0; color: var(--color-primary); font-size: 0.9rem; font-weight: 500;">
-                                <li style="margin-bottom: 0.3rem;">✓ Ampla Sacada Privativa</li>
-                                <li style="margin-bottom: 0.3rem;">✓ Vista Privilegiada</li>
-                                <li>✓ Conforto Supremo</li>
-                            </ul>
-                        </div>
+                <div class="acomodacoes__grid" id="acomodacoes-grid">
+                    <div id="loader" class="loader"
+                        style="margin: 3rem auto; display: block; border: 4px solid rgba(230, 192, 115, 0.3); border-top: 4px solid var(--color-primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;">
                     </div>
                 </div>
 
@@ -432,9 +438,8 @@
                             <p class="card__desc" style="margin-bottom: 1.5rem;">Descubra condições e tarifas especiais
                                 para curtir o Carnaval, Semana Santa, Réveillon ou suas Férias com a família.</p>
                             <!-- Aqui entra o link/botão para o Motor de Reservas -->
-                            <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank"
-                                class="btn btn--outline" style="width: 100%; max-width: 300px; margin: 0 auto;">Acessar
-                                Motor de Reservas</a>
+                            <a href="pacotes.html" class="btn btn--outline"
+                                style="width: 100%; max-width: 300px; margin: 0 auto;">Ver Todos os Pacotes</a>
                         </div>
                     </div>
                 </div>
@@ -828,8 +833,205 @@
         </svg>
     </a>
 
+    <!-- JavaScript do SDK do Supabase e lógica de exibição de acomodações -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const SUPABASE_URL = 'https://sxplhqjnalnckzijvkjm.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4cGxocWpuYWxuY2t6aWp2a2ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4MDMyMzcsImV4cCI6MjA4MzM3OTIzN30.OTHLJ7b5XWCh2N4NI7ASRTrwfE9Frn0VMJZ3PuK8EQE';
+
+            if (!window.supabase) {
+                console.error('Supabase SDK não foi carregado corretamente.');
+                return;
+            }
+
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const gridContainer = document.getElementById('acomodacoes-grid');
+
+            const MOTOR_RESERVAS_DOMAIN = 'https://motor-de-reservas-on-line-hotel-sol.vercel.app';
+
+            const getPublicImageUrl = (path) => {
+                if (!path) return 'assets/images/logo.png';
+                const trimmedUrl = path.trim();
+                if (trimmedUrl.startsWith('data:image')) return trimmedUrl;
+
+                if (trimmedUrl.startsWith('/')) return `${MOTOR_RESERVAS_DOMAIN}${trimmedUrl}`;
+
+                if (trimmedUrl.includes('google.com')) {
+                    let fileId = '';
+                    const idRegex = /([a-zA-Z0-9_-]{25,})/;
+                    const match = trimmedUrl.match(idRegex);
+
+                    if (match && match[1]) {
+                        fileId = match[1];
+                        if (['sharing', 'view', 'edit', 'drive', 'file', 'folders', 'preview'].includes(fileId.toLowerCase())) {
+                            const secondaryMatch = trimmedUrl.substring(trimmedUrl.indexOf(fileId) + fileId.length).match(idRegex);
+                            if (secondaryMatch) fileId = secondaryMatch[1];
+                        }
+                        const driveLink = encodeURIComponent(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1024`);
+                        return `https://wsrv.nl/?url=${driveLink}`;
+                    }
+                    return trimmedUrl;
+                }
+
+                if (!trimmedUrl.startsWith('http')) {
+                    const { data } = supabase.storage.from('package-images').getPublicUrl(trimmedUrl);
+                    return data.publicUrl;
+                }
+
+                return trimmedUrl;
+            };
+
+            const renderRoomCard = (room, delay) => {
+                let imgSrc = 'assets/images/logo.png';
+                if (room.images && room.images.length > 0) {
+                    imgSrc = getPublicImageUrl(room.images[0]);
+                } else if (room.image_urls && room.image_urls.length > 0) {
+                    imgSrc = getPublicImageUrl(room.image_urls[0]);
+                }
+
+                let amenitiesHTML = '';
+                if (room.features && Array.isArray(room.features)) {
+                    const visibleAmenities = room.features.slice(0, 4);
+                    const listItems = visibleAmenities.map(item => `<li style="margin-bottom: 0.3rem;">✓ ${item}</li>`).join('');
+                    amenitiesHTML = `<ul style="list-style: none; padding: 0; color: var(--color-primary); font-size: 0.9rem; font-weight: 500;">${listItems}</ul>`;
+                } else if (room.amenities && Array.isArray(room.amenities)) {
+                    const visibleAmenities = room.amenities.slice(0, 4);
+                    const listItems = visibleAmenities.map(item => `<li style="margin-bottom: 0.3rem;">✓ ${item}</li>`).join('');
+                    amenitiesHTML = `<ul style="list-style: none; padding: 0; color: var(--color-primary); font-size: 0.9rem; font-weight: 500;">${listItems}</ul>`;
+                }
+
+                let badgeHTML = '';
+                const roomNameLower = (room.name || '').toLowerCase();
+                if (roomNameLower.includes('vista mar')) {
+                    badgeHTML = `<div class="card__badge" style="background-color: var(--color-primary);">Vista Premium</div>`;
+                } else if (roomNameLower.includes('loft') || roomNameLower.includes('casal')) {
+                    badgeHTML = `<div class="card__badge">O Mais Procurado</div>`;
+                }
+
+                return `
+                    <div class="card fade-up" style="transition-delay: ${delay}ms; opacity: 1; transform: translateY(0);">
+                        <div class="card__image">
+                            <img src="${imgSrc}" alt="${room.name}" loading="lazy" onerror="this.src='assets/images/logo.png'" onclick="openGallery('${room.id}', 0)" title="Ver álbum de fotos" style="cursor: pointer;">
+                            ${badgeHTML}
+                        </div>
+                        <div class="card__content">
+                            <h3 class="card__title" style="font-size: 1.4rem;">${room.name}</h3>
+                            <p class="card__desc" style="margin-bottom: 1rem;">${room.description || ''}</p>
+                            ${amenitiesHTML}
+                        </div>
+                    </div>
+                `;
+            };
+
+            try {
+                // Tabela que armazena os tipos de quartos do Motor de Reservas é room_types
+                const { data: rooms, error } = await supabase
+                    .from('room_types')
+                    .select('*')
+                    .eq('active', true)
+                    .order('name', { ascending: true });
+
+                if (error) throw error;
+
+                if (gridContainer) gridContainer.innerHTML = '';
+
+                if (!rooms || rooms.length === 0) {
+                    if (gridContainer) gridContainer.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Nenhuma acomodação encontrada no momento.</p>';
+                    return;
+                }
+
+                // Injeta as galerias no escopo global e renderiza os cards
+                window.roomGalleries = {};
+                rooms.forEach((room, index) => {
+                    const delay = index * 100;
+
+                    // Constrói o array de imagens resolvidas para o modal
+                    const resolvedImages = [];
+                    if (room.images && room.images.length > 0) {
+                        resolvedImages.push(...room.images.map(getPublicImageUrl));
+                    } else if (room.image_urls && room.image_urls.length > 0) {
+                        resolvedImages.push(...room.image_urls.map(getPublicImageUrl));
+                    }
+                    // Se não tiver foto, usa a placeholder
+                    if (resolvedImages.length === 0) resolvedImages.push('assets/images/logo.png');
+
+                    window.roomGalleries[room.id] = resolvedImages;
+
+                    if (gridContainer) gridContainer.innerHTML += renderRoomCard(room, delay);
+                });
+
+            } catch (err) {
+                console.error('Erro ao buscar acomodações:', err);
+                if (gridContainer) gridContainer.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Erro ao carregar as acomodações. Tente recarregar a página.</p>';
+            }
+        });
+
+        // Lógica da Galeria de Fotos (Modal)
+        window.currentGalleryRoomId = null;
+        window.currentGalleryIndex = 0;
+
+        window.openGallery = (roomId, startIndex) => {
+            if (!window.roomGalleries || !window.roomGalleries[roomId]) return;
+            const images = window.roomGalleries[roomId];
+            if (images.length === 0) return;
+
+            window.currentGalleryRoomId = roomId;
+            window.currentGalleryIndex = startIndex;
+
+            const modal = document.getElementById('imageGalleryModal');
+            const mainImg = document.getElementById('galleryMainImage');
+            const counter = document.getElementById('galleryCounter');
+
+            mainImg.src = images[window.currentGalleryIndex];
+            if (counter) counter.innerText = `${window.currentGalleryIndex + 1} / ${images.length}`;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Impede o scroll de fundo
+        };
+
+        window.closeGallery = () => {
+            const modal = document.getElementById('imageGalleryModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restaura o scroll
+        };
+
+        window.changeGalleryImage = (direction) => {
+            const images = window.roomGalleries[window.currentGalleryRoomId];
+            window.currentGalleryIndex += direction;
+
+            if (window.currentGalleryIndex >= images.length) {
+                window.currentGalleryIndex = 0;
+            } else if (window.currentGalleryIndex < 0) {
+                window.currentGalleryIndex = images.length - 1;
+            }
+
+            const mainImg = document.getElementById('galleryMainImage');
+            const counter = document.getElementById('galleryCounter');
+            mainImg.src = images[window.currentGalleryIndex];
+            if (counter) counter.innerText = `${window.currentGalleryIndex + 1} / ${images.length}`;
+        };
+
+        // Fechar ao clicar fora da imagem
+        window.onclick = function (event) {
+            const modal = document.getElementById('imageGalleryModal');
+            if (event.target == modal) {
+                closeGallery();
+            }
+        };
+    </script>
+
     <!-- JS -->
     <script src="assets/js/main.js"></script>
+    <!-- Modal Gallery HTML -->
+    <div id="imageGalleryModal" class="modal-gallery">
+        <span class="modal-gallery-close" onclick="closeGallery()">&times;</span>
+        <img class="modal-gallery-content" id="galleryMainImage">
+        <div class="modal-gallery-nav">
+            <span class="gallery-counter" id="galleryCounter"></span>
+            <span class="modal-gallery-prev" onclick="changeGalleryImage(-1)">&#10094;</span>
+            <span class="modal-gallery-next" onclick="changeGalleryImage(1)">&#10095;</span>
+        </div>
+    </div>
 </body>
 
 </html>

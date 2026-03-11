@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Confira os melhores pacotes de viagem e feriados no Hotel Solar em Salinópolis. Carnaval, Férias de Julho e pacotes especiais completos.">
+    <title>Pacotes e Feriados | Hotel Solar</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+
+    <!-- Fontes do Google: Outfit (Títulos) e Inter (Texto) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+
+    <style>
+        .hero--pacotes {
+            background-image: url('assets/images/IMG_3488.webp');
+            background-position: center;
+        }
+
+        .pacote-card {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: transform var(--transition-normal);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .pacote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.15);
+        }
+
+        .pacote-card__image {
+            position: relative;
+            padding-bottom: 60%;
+            /* 16:9 Aspect Ratio aprox */
+            overflow: hidden;
+        }
+
+        .pacote-card__image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+
+        .pacote-card:hover .pacote-card__image img {
+            transform: scale(1.1);
+        }
+
+        .pacote-card__overlay {
+            position: absolute;
+            inset: 0;
+            background: transparent;
+        }
+
+        .pacote-card__badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            z-index: 10;
+        }
+
+        .pacote-card__content {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pacote-card__dates {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--color-primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .pacote-card__title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+            line-height: 1.2;
+        }
+
+        .pacote-card__desc {
+            color: var(--color-text-light);
+            margin-bottom: 2rem;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .pacote-card__includes {
+            margin-bottom: 2rem;
+        }
+
+        .pacote-card__includes-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-text-light);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .pacote-card__includes-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .pacote-card__includes-item {
+            font-size: 0.8rem;
+            background: var(--color-background);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            color: var(--color-text-main);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pacote-card__includes-item::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--color-secondary);
+        }
+
+        .pacote-card__action {
+            margin-top: auto;
+        }
+
+        .pacote-card__btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all var(--transition-fast);
+        }
+
+        .pacote-card__btn:hover {
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img"
+                    style="filter: brightness(0) invert(1);">
+            </a>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <nav class="nav" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="index.html#inicio" class="nav__link">Início</a></li>
+                    <li class="nav__item"><a href="index.html#acomodacoes" class="nav__link">Acomodações</a></li>
+                    <li class="nav__item"><a href="pacotes.html" class="nav__link active">Pacotes</a></li>
+                    <li class="nav__item"><a href="index.html#sobre" class="nav__link">O Hotel</a></li>
+                    <li class="nav__item"><a href="estrutura.html" class="nav__link">Estrutura</a></li>
+                    <li class="nav__item"><a href="experiencias.html" class="nav__link">Experiências</a></li>
+                    <li class="nav__item"><a href="eventos.html" class="nav__link">Eventos</a></li>
+                </ul>
+                <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank"
+                    class="btn btn--primary nav__btn">Reservar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section Pacotes -->
+        <section class="hero hero--pacotes">
+            <div class="hero__overlay"
+                style="background: linear-gradient(to bottom, rgba(15, 59, 33, 0.5) 0%, rgba(15, 59, 33, 0.8) 100%);">
+            </div>
+            <div class="container hero__container">
+                <div class="hero__content fade-up">
+                    <h1 class="hero__title">Pacotes Especiais e Feriados</h1>
+                    <p class="hero__subtitle">Programe-se para viver momentos inesquecíveis em Salinópolis com condições
+                        exclusivas nas melhores épocas do ano.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid de Pacotes -->
+        <section class="section" style="background-color: var(--color-background); padding: 5rem 0;">
+            <div class="container">
+
+                <div class="text-center fade-up" style="margin-bottom: 4rem;">
+                    <span
+                        style="font-family: var(--font-heading); color: var(--color-secondary); font-size: 1.2rem; display: block; margin-bottom: 0.5rem; font-style: italic;">Sua
+                        Próxima Viagem</span>
+                    <h2 class="section-title">Pacotes Destacados</h2>
+                </div>
+
+                <div id="pacotes-grid" class="grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+
+                    <!-- Loader temporário -->
+                    <div
+                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--color-text-light);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="animation: spin 1s linear infinite; margin-bottom: 1rem;">
+                            <style>
+                                @keyframes spin {
+                                    100% {
+                                        transform: rotate(360deg);
+                                    }
+                                }
+                            </style>
+                            <line x1="12" y1="2" x2="12" y2="6"></line>
+                            <line x1="12" y1="18" x2="12" y2="22"></line>
+                            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+                            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+                            <line x1="2" y1="12" x2="6" y2="12"></line>
+                            <line x1="18" y1="12" x2="22" y2="12"></line>
+                            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+                            <line x1="16.24" y1="4.93" x2="19.07" y2="7.76"></line>
+                        </svg>
+                        <p>Buscando pacotes no momento...</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Informações Adicionais -->
+        <section class="section" style="background-color: var(--color-white); padding: 4rem 0;">
+            <div class="container text-center fade-up">
+                <h3
+                    style="font-size: 1.8rem; color: var(--color-primary); margin-bottom: 1.5rem; font-family: var(--font-heading);">
+                    Não encontrou o pacote ideal?</h3>
+                <p
+                    style="color: var(--color-text-light); max-width: 600px; margin: 0 auto 2rem auto; font-size: 1.1rem; line-height: 1.6;">
+                    Entre em contato conosco pelo WhatsApp. Montamos opções e experiências personalizadas (como Lua de
+                    Mel e Aniversários) para que sua estada no Hotel Solar seja exatamente como você sonhou.
+                </p>
+                <a href="https://wa.me/5591981229825" target="_blank" class="btn btn--outline"
+                    style="border-width: 2px;">
+                    Falar no WhatsApp
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" id="destino">
+        <div class="container footer__container fade-up">
+            <div class="footer__col footer__intro">
+                <a href="index.html" class="logo" style="margin-bottom: 1.5rem; display: inline-block;">
+                    <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img"
+                        style="filter: brightness(0) invert(1);">
+                </a>
+                <p style="color: rgba(255,255,255,0.7); max-width: 300px; margin-bottom: 1.5rem;">O Encanto da Amazônia
+                    Atlântica. Uma experiência inesquecível em Salinópolis.</p>
+                <!-- Omitidos links sociais por brevidade, assumindo main js cuidará disso se for partial, caso contrário os mantenho preenchidos -->
+            </div>
+
+            <!-- Footer Contato Localização -->
+            <div class="footer__col">
+                <h4 class="footer__title">Contato</h4>
+                <ul class="footer__list">
+                    <li>Avenida Atlântica, s/n - Salinópolis, PA</li>
+                    <li>(91) 981000800</li>
+                    <li>reserva@hotelsolar.tur.br</li>
+                    <li><a href="experiencias.html"
+                            style="color:var(--color-secondary); margin-top: 1rem; display:block;">Ver Experiências</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="container">
+                <p>&copy; 2026 Hotel Solar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/5591981229825" class="whatsapp-float" target="_blank"
+        aria-label="Falar com o Hotel Solar no WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.8 5.8 0 00-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+    </a>
+
+    <!-- JavaScript do SDK do Supabase e lógica de exibição de pacotes -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Dados locais idênticos ao july_migration.json do Motor de Reservas
+        const JULY_PACKAGES_DATA = [
+            {
+                "id": "jul-1",
+                "name": "Celebração Solar: Abertura & Aniversário",
+                "description": "Damos as boas-vindas ao verão com a grande festa de aniversário do Hotel Solar. Uma celebração única com música ao vivo, coquetel especial e a energia contagiante de Salinas.",
+                "image_url": "/celebracao-solar-final.jpg",
+                "start_iso_date": "2026-07-02",
+                "end_iso_date": "2026-07-05",
+                "active": true,
+                "is_promotional": false,
+                "includes": ["Quinta-feira Welcome drink festivo", "Sexta-feira Inauguração do novo cardápio de drinks com degustação e DJ.", "Sábado comemoração de aniversário do Solar com show."]
+            },
+            {
+                "id": "jul-family",
+                "name": "Semana da Família: Domingo a Quinta",
+                "description": "O melhor custo-benefício de Julho. Aproveite diárias reduzidas durante a semana e ganhe o Jantar Cortesia (Buffet de Sopas e Massas) todas as noites para toda a sua família.",
+                "image_url": "/semana-da-familia-premium.jpg",
+                "start_iso_date": "2026-07-05", // Usado apenas p visual
+                "end_iso_date": "2026-07-30",
+                "active": true,
+                "is_promotional": true,
+                "full_period_discount_pct": 0,
+                "includes": ["Jantar Cortesia Incluso", "Buffet de Sopas & Massas", "Menor Tarifa do Mês", "Recreação para Crianças"]
+            },
+            {
+                "id": "jul-2",
+                "name": "Solarize-se: O Verão de Salinas",
+                "description": "Sinta a verdadeira energia do Sol de Salinas. Uma semana dedicada ao bem-estar e à conexão total com a natureza e quem você ama.",
+                "image_url": "/solarize-se-premium-final.jpg",
+                "start_iso_date": "2026-07-09",
+                "end_iso_date": "2026-07-12",
+                "active": true,
+                "is_promotional": false,
+                "includes": ["Oficinas Criativas", "Check-in Animado", "Recreação Infantil"]
+            },
+            {
+                "id": "jul-3",
+                "name": "O Auge do Verão: Parte 1",
+                "description": "O pico da temporada chegou! Viva o hotel em sua capacidade máxima de alegria, com eventos exclusivos e o melhor da nossa gastronomia regional.",
+                "image_url": "/auge-verao-parte-1-premium.jpg",
+                "start_iso_date": "2026-07-16",
+                "end_iso_date": "2026-07-19",
+                "active": true,
+                "is_promotional": false,
+                "includes": ["Noite Paraense", "Gincana na Piscina", "Sunset com DJ"]
+            },
+            {
+                "id": "jul-4",
+                "name": "O Auge do Verão: Parte 2",
+                "description": "A vibração máxima de Salinas continua. Atividades intensas para todas as idades criam memórias inesquecíveis à beira-mar.",
+                "image_url": "/auge-verao-parte-2-premium.jpg",
+                "start_iso_date": "2026-07-23",
+                "end_iso_date": "2026-07-26",
+                "active": true,
+                "is_promotional": false,
+                "includes": ["Luau de Verão", "Show de Talentos", "Beach Tennis"]
+            },
+            {
+                "id": "jul-5",
+                "name": "Bye Bye July: A Saideira",
+                "description": "A despedida em grande estilo que Salinas merece. Aproveite os últimos momentos do mês com condições especiais e muita diversão.",
+                "image_url": "/bye-bye-july-final.jpg",
+                "start_iso_date": "2026-07-30",
+                "end_iso_date": "2026-08-02",
+                "active": true,
+                "is_promotional": false,
+                "includes": ["Baile de Despedida", "Fotos em Família", "Personagens Infantis"]
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const SUPABASE_URL = 'https://sxplhqjnalnckzijvkjm.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4cGxocWpuYWxuY2t6aWp2a2ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4MDMyMzcsImV4cCI6MjA4MzM3OTIzN30.OTHLJ7b5XWCh2N4NI7ASRTrwfE9Frn0VMJZ3PuK8EQE';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const gridContainer = document.getElementById('pacotes-grid');
+
+            // Domínio do Motor de Reservas para pegar as fotos relativas de Julho (ex: /celebracao-solar-final.jpg)
+            const MOTOR_RESERVAS_DOMAIN = 'https://motor-de-reservas-on-line-hotel-sol.vercel.app';
+
+            const getPublicImageUrl = (path) => {
+                if (!path) return 'assets/images/logo.png';
+                const trimmedUrl = path.trim();
+                if (trimmedUrl.startsWith('data:image')) return trimmedUrl;
+
+                // Tratar caminhos relativos buscando hospedagem no Motor
+                if (trimmedUrl.startsWith('/')) return `${MOTOR_RESERVAS_DOMAIN}${trimmedUrl}`;
+
+                if (trimmedUrl.includes('google.com')) {
+                    let fileId = '';
+                    const idRegex = /([a-zA-Z0-9_-]{25,})/;
+                    const match = trimmedUrl.match(idRegex);
+
+                    if (match && match[1]) {
+                        fileId = match[1];
+                        if (['sharing', 'view', 'edit', 'drive', 'file', 'folders', 'preview'].includes(fileId.toLowerCase())) {
+                            const secondaryMatch = trimmedUrl.substring(trimmedUrl.indexOf(fileId) + fileId.length).match(idRegex);
+                            if (secondaryMatch) fileId = secondaryMatch[1];
+                        }
+                        // Usar proxy wsrv.nl em volta do link do drive para remover cabeçalhos restritivos e evitar bloqueio ORB
+                        const driveLink = encodeURIComponent(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1024`);
+                        return `https://wsrv.nl/?url=${driveLink}`;
+                    }
+                }
+
+                if (trimmedUrl.startsWith('http')) return trimmedUrl;
+                return `${SUPABASE_URL}/storage/v1/object/public/${trimmedUrl}`;
+            };
+
+            const formatDate = (dateIso) => {
+                if (!dateIso) return '';
+                const parts = dateIso.split('-');
+                if (parts.length < 3) return dateIso;
+                const date = new Date(parts[0], parts[1] - 1, parts[2]);
+                const meses = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+                return `${date.getDate().toString().padStart(2, '0')} ${meses[date.getMonth()]}`;
+            };
+
+            const renderCard = (pkg, index, delayBase = 0) => {
+                const delay = (index * 100) + delayBase;
+                const imgSrc = getPublicImageUrl(pkg.imageUrl || pkg.image_url);
+                const isFamily = pkg.id === 'jul-family';
+
+                let dateDisplay = '';
+                if (isFamily) {
+                    dateDisplay = 'ESCOLHA SUA SEMANA';
+                } else {
+                    dateDisplay = `${formatDate(pkg.startIsoDate || pkg.start_iso_date)} — ${formatDate(pkg.endIsoDate || pkg.end_iso_date)}`;
+                }
+
+                const includesArray = Array.isArray(pkg.includes) ? pkg.includes : [];
+                let includesHTML = '';
+                if (includesArray.length > 0) {
+                    const items = includesArray.map(item => `<span class="pacote-card__includes-item">${item}</span>`).join('');
+                    includesHTML = `
+                        <div class="pacote-card__includes">
+                            <p class="pacote-card__includes-title" style="text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--color-text-light);">Destaques da experiência:</p>
+                            <div class="pacote-card__includes-list">
+                                ${items}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const discountPct = pkg.fullPeriodDiscountPct || pkg.full_period_discount_pct || 0;
+                let badgeHTML = '';
+                if (discountPct > 0) {
+                    badgeHTML = `<div class="pacote-card__badge" style="background-color:#dc2626;color:white; font-weight: 800; padding: 0.5rem 1rem;">${discountPct}% OFF</div>`;
+                } else if (pkg.isPromotional || pkg.is_promotional) {
+                    badgeHTML = `<div class="pacote-card__badge" style="background-color: var(--color-primary);color:white; font-weight: 800; padding: 0.5rem 1rem;">OFERTA MID-WEEK</div>`;
+                } else {
+                    badgeHTML = `<div class="pacote-card__badge" style="background-color: var(--color-secondary);color:var(--color-primary); font-weight: 800; padding: 0.5rem 1rem;">Pacote Especial</div>`;
+                }
+
+                const startDateParam = pkg.startIsoDate || pkg.start_iso_date || '';
+                const endDateParam = pkg.endIsoDate || pkg.end_iso_date || '';
+
+                // Build Booking Engine Link with Date Pre-selection
+                let bookingUrl = `https://motor-de-reservas-on-line-hotel-sol.vercel.app?`;
+                if (startDateParam && endDateParam) {
+                    bookingUrl += `checkIn=${startDateParam}&checkOut=${endDateParam}&adults=2`;
+                } else {
+                    bookingUrl += `pacote=${pkg.id}&adults=2`;
+                }
+
+                return `
+                    <div class="pacote-card fade-up" style="transition-delay: ${delay}ms; opacity: 1; transform: translateY(0); ${pkg.isPromotional || pkg.is_promotional ? 'border: 2px solid var(--color-primary); box-shadow: 0 10px 30px rgba(15, 59, 33, 0.15);' : ''}">
+                        <div class="pacote-card__image">
+                            <img src="${imgSrc}" alt="${pkg.name}" loading="lazy" onerror="this.src='assets/images/logo.png'">
+                            <div class="pacote-card__overlay"></div>
+                            ${badgeHTML}
+                        </div>
+                        <div class="pacote-card__content">
+                            <div class="pacote-card__dates" style="background-color: rgba(230, 192, 115, 0.1); border: 1px solid rgba(230, 192, 115, 0.3); border-radius: 8px; padding: 0.5rem 1rem;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                <strong>${dateDisplay.toUpperCase()}</strong>
+                            </div>
+                            <h3 class="pacote-card__title">${pkg.name}</h3>
+                            <p class="pacote-card__desc">${pkg.description || ''}</p>
+                            ${includesHTML}
+                            <div class="pacote-card__action">
+                                <a href="${bookingUrl}" target="_blank" class="pacote-card__btn" style="display:flex; align-items:center; justify-content:center; gap: 0.5rem; letter-spacing: 0.1em; background-color: var(--color-primary); color: white;">
+                                    GARANTIR MINHA VAGA
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:5px;"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            try {
+                const { data: packages, error } = await supabase
+                    .from('packages')
+                    .select('*')
+                    .eq('active', true);
+
+                if (error) throw error;
+                gridContainer.innerHTML = '';
+
+                let combinedArray = [];
+                if (packages && packages.length > 0) {
+                    packages.sort((a, b) => new Date(a.startIsoDate) - new Date(b.startIsoDate));
+                    combinedArray = [...packages];
+                }
+
+                // Injetar pacote familiar no topo se for época
+                const activeJulyPackages = JULY_PACKAGES_DATA.filter(p => p.active);
+
+                // Renderizar pacote normal do Supabase
+                let delayCounter = 0;
+                combinedArray.forEach((pkg, idx) => {
+                    gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
+                });
+
+                // Seção de Julho embutida logicamente após
+                if (activeJulyPackages.length > 0) {
+                    gridContainer.insertAdjacentHTML('beforeend', `<div style="grid-column: 1/-1; text-align: center; margin-top: 4rem; margin-bottom: 2rem; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); padding: 3rem 2rem; border-radius: 2rem; color: white;"><span style="font-family: var(--font-heading); color: var(--color-white); font-size: 1.2rem; display: block; margin-bottom: 0.5rem; font-style: italic;">Verão Amazônico 2026</span><h2 class="section-title" style="color: white; font-size: 3rem;">Julho em Salinas</h2><div style="width: 40px; height: 2px; background: white; margin: 0 auto; border-radius: 4px;"></div><p style="margin-top:20px; color: rgba(255,255,255,0.9); max-width:600px; margin-inline:auto; font-size: 1.1rem; line-height: 1.6;">O Sol de Julho em Salinas é pura energia. Preparamos experiências exclusivas para você viver o melhor do verão no Hotel Solar.</p></div>`);
+                    activeJulyPackages.forEach((pkg) => {
+                        gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
+                    });
+                }
+
+                if (combinedArray.length === 0 && activeJulyPackages.length === 0) {
+                    gridContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--color-text-main); padding: 3rem;">No momento, não temos pacotes especiais ativos. Fique de olho ou entre em contato!</div>';
+                }
+
+            } catch (err) {
+                console.error("Erro ao puxar pacotes:", err);
+                gridContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #dc2626; padding: 3rem;">Ocorreu um problema ao comunicar com o servidor. Tente novamente mais tarde.</div>';
+            }
+        });
+    </script>
+
+    <!-- JS -->
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
