@@ -447,9 +447,10 @@
                             const secondaryMatch = trimmedUrl.substring(trimmedUrl.indexOf(fileId) + fileId.length).match(idRegex);
                             if (secondaryMatch) fileId = secondaryMatch[1];
                         }
-                        // Usar proxy wsrv.nl em volta do link do drive para remover cabeçalhos restritivos e evitar bloqueio ORB
-                        const driveLink = encodeURIComponent(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1024`);
-                        return `https://wsrv.nl/?url=${driveLink}`;
+                        if (fileId) {
+                            // Utilizando o link direto de visualização do Google Drive (evitando proxy aberto wsrv.nl)
+                            return `https://drive.google.com/uc?export=view&id=${fileId}`;
+                        }
                     }
                 }
 
