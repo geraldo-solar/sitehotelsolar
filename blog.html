@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blog do Hotel Solar. Dicas de turismo, passeios, gastronomia e tudo o que você precisa saber para aproveitar Salinópolis ao máximo.">
+    <title>Blog do Hotel Solar | Dicas de Turismo em Salinópolis</title>
+
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+
+    <style>
+        .blog-hero {
+            position: relative;
+            background-image: url('assets/images/reserva-3.webp');
+            background-size: cover;
+            background-position: center;
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--color-white);
+            padding-top: 80px;
+        }
+        .blog-hero__overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(30, 48, 30, 0.7);
+        }
+        .blog-hero__content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        .blog-hero__title {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--color-secondary);
+            margin-bottom: 1rem;
+        }
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: -3rem;
+            position: relative;
+            z-index: 5;
+            padding-bottom: 4rem;
+        }
+        .blog-card {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+        }
+        .blog-card__image-wrap {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+        .blog-card__image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .blog-card:hover .blog-card__image {
+            transform: scale(1.05);
+        }
+        .blog-card__category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--color-secondary);
+            color: var(--color-primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .blog-card__content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-card__title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--color-primary);
+            font-family: var(--font-heading);
+            line-height: 1.4;
+        }
+        .blog-card__excerpt {
+            color: var(--color-text-main);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+        .blog-card__footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+        .blog-card__readmore {
+            color: var(--color-secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img">
+            </a>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <nav class="nav" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="index.html#inicio" class="nav__link">Início</a></li>
+                    <li class="nav__item"><a href="index.html#acomodacoes" class="nav__link">Acomodações</a></li>
+                    <li class="nav__item"><a href="pacotes.html" class="nav__link">Pacotes</a></li>
+                    <li class="nav__item"><a href="index.html#sobre" class="nav__link">O Hotel</a></li>
+                    <li class="nav__item"><a href="estrutura.html" class="nav__link">Estrutura</a></li>
+                    <li class="nav__item"><a href="experiencias.html" class="nav__link">Experiências</a></li>
+                    <li class="nav__item"><a href="eventos.html" class="nav__link">Eventos</a></li>
+                    <li class="nav__item"><a href="index.html#gastronomia" class="nav__link">Gastronomia</a></li>
+                    <li class="nav__item"><a href="blog.html" class="nav__link active">Blog</a></li>
+                </ul>
+                <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank" class="btn btn--primary nav__btn">Reservar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="blog-hero">
+            <div class="blog-hero__overlay"></div>
+            <div class="container blog-hero__content fade-up">
+                <h1 class="blog-hero__title">Descubra Salinópolis</h1>
+                <p style="font-size: 1.2rem; line-height: 1.6;">Dicas de roteiros, praias escondidas, gastronomia local e tudo o que você precisa para uma viagem perfeita na Amazônia Atlântica.</p>
+            </div>
+        </section>
+
+        <section class="section" style="background-color: var(--color-background);">
+            <div class="container blog-grid">
+                
+                <!-- Post 1 -->
+                <a href="dicas-salinopolis.html" class="blog-card fade-up">
+                    <div class="blog-card__image-wrap">
+                        <img src="praia familia.webp" alt="Dicas de Viagem" class="blog-card__image" loading="lazy">
+                        <span class="blog-card__category">Roteiros</span>
+                    </div>
+                    <div class="blog-card__content">
+                        <h2 class="blog-card__title">O que fazer em Salinópolis em 3 dias: O Roteiro Perfeito</h2>
+                        <p class="blog-card__excerpt">Vai passar o fim de semana em Salinas? Preparamos um guia completo para você aproveitar as praias, a gastronomia e o melhor do descanso...</p>
+                        <div class="blog-card__footer">
+                            <span>15 de Março, 2026</span>
+                            <span class="blog-card__readmore">Ler mais &rarr;</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Post 2 - Em Breve -->
+                <div class="blog-card fade-up" style="transition-delay: 100ms; opacity: 0.6; pointer-events: none;">
+                    <div class="blog-card__image-wrap" style="background-color: #f4f5f7; display: flex; align-items: center; justify-content: center; height: 100%;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="blog-card__content">
+                        <h2 class="blog-card__title">Novo artigo sendo preparado...</h2>
+                        <p class="blog-card__excerpt">Estamos escrevendo mais dicas incríveis sobre gastronomia, passeios e novidades de Salinópolis. Fique de olho!</p>
+                        <div class="blog-card__footer">
+                            <span>Previsão: 30 de Março, 2026</span>
+                            <span class="blog-card__readmore" style="color: var(--color-text-light);">Em breve</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__container fade-up">
+            <div class="footer__col footer__intro">
+                <a href="#" class="logo" style="margin-bottom: 1.5rem; display: inline-block;">
+                    <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img" style="filter: brightness(0) invert(1);">
+                </a>
+                <p style="color: rgba(255,255,255,0.7); max-width: 300px; margin-bottom: 1.5rem;">O Encanto da Amazônia Atlântica. Uma experiência inesquecível em Salinópolis.</p>
+            </div>
+            <div class="footer__col">
+                <h4 class="footer__title">Contato</h4>
+                <ul class="footer__list">
+                    <li>Avenida Atlântica, s/n - Salinópolis, PA, 68721-000</li>
+                    <li>(91) 981000800</li>
+                    <li>reserva@hotelsolar.tur.br</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="container">
+                <p>&copy; 2026 Hotel Solar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
