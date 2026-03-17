@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <!-- Definitions for gradients/clips if needed -->
+  <defs>
+    <!-- Dark green for the cross background -->
+  </defs>
+
+  <!-- Group for Logo Icon (Cross + Ribbon) -->
+  <g transform="translate(50, 0)">
+    <!-- Main Green Cross Background with rounding -->
+    <path d="M130 40 h40 a5 5 0 0 1 5 5 v35 h35 a5 5 0 0 1 5 5 v40 a5 5 0 0 1 -5 5 h-35 v35 a5 5 0 0 1 -5 5 h-40 a5 5 0 0 1 -5 -5 v-35 h-35 a5 5 0 0 1 -5 -5 v-40 a5 5 0 0 1 5 -5 h35 v-35 a5 5 0 0 1 5 -5 z" fill="#0b843d" />
+
+    <!-- stylized white s or path inside cross -->
+    <path d="M95 95 h25 v-40 h30 v60 c0 20 40 10 40 30 v-25 h-15 v15 c0 -15 -40 0 -40 -35 v-30 h-10 v55 h-30 z" fill="#ffffff" />
+    
+    <!-- Red Ribbon Background -->
+    <path d="M85 110 c20 5 40 25 65 25 c30 0 45 -15 65 -15 v15 c-20 0 -35 15 -65 15 c-25 0 -45 -20 -65 -25 z" fill="#b01f24" />
+    
+    <!-- "Salinas" Text inside Ribbon -->
+    <text x="125" y="130" font-family="'Brush Script MT', 'Dancing Script', cursive" font-size="22" fill="#ffffff" transform="rotate(-5 150 130)">Salinas</text>
+  </g>
+
+  <!-- Text Group -->
+  <g transform="translate(0, 220)">
+    <!-- "MED" -->
+    <text x="35" y="0" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="72" fill="#0b843d" font-weight="900" transform="scale(0.8, 1)">M E D</text>
+    
+    <!-- "CENTER" -->
+    <text x="195" y="0" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="72" fill="#0b843d" font-weight="300" transform="scale(0.9, 1)">CENTER</text>
+    
+    <!-- Subtitle: "POLICLÍNICA E MEDICINA DO TRABALHO" -->
+    <text x="65" y="35" font-family="'Arial', 'Helvetica Neue', sans-serif" font-size="12" fill="#2d964f" font-weight="400" letter-spacing="0.5">POLICLÍNICA E MEDICINA DO TRABALHO</text>
+  </g>
+</svg>
