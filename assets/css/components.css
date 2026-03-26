@@ -71,6 +71,7 @@
     display: flex;
     align-items: center;
     z-index: 1001;
+    flex-shrink: 0;
 }
 
 .logo__img {
@@ -89,12 +90,12 @@
 .nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.2rem;
 }
 
 .nav__list {
     display: flex;
-    gap: 2rem;
+    gap: 1.2rem;
 }
 
 .nav__link {
@@ -104,6 +105,7 @@
     transition: color var(--transition-fast);
     position: relative;
     padding: 0.5rem 0;
+    white-space: nowrap;
 }
 
 .header.scrolled .nav__link {
