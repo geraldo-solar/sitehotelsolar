@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Descubra as melhores praias de Salinópolis, Pará. Conheça Atalaia, Farol Velho, Maçarico e a nossa favorita: Ponta do Espadarte.">
+    <title>As Melhores Praias de Salinópolis | Blog do Hotel Solar</title>
+
+    <link rel="icon" type="image/png" href="assets/images/favicon.png?v=3">
+
+    <!-- SEO e Open Graph para o Post -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="As Melhores Praias de Salinópolis: Guia Completo">
+    <meta property="og:description" content="Conheça as praias do Atalaia, Farol Velho, Maçarico e o paraíso da Ponta do Espadarte. Qual escolher para o seu verão?">
+    <meta property="og:image" content="https://hotelsolar.tur.br/auge-verao-parte-2-premium.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+
+    <style>
+        .post-hero {
+            position: relative;
+            background-image: url('auge-verao-parte-2-premium.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 60vh;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 4rem;
+            color: var(--color-white);
+        }
+        .post-hero__overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(20,40,26,0.95), transparent);
+        }
+        .post-hero__content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+        .post-meta {
+            font-size: 0.95rem;
+            color: var(--color-secondary);
+            font-weight: 500;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .post-title {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            color: var(--color-white);
+        }
+        .post-content {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 4rem 1.5rem;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--color-text-main);
+        }
+        .post-content h2, .post-content h3 {
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .post-content h2 { font-size: 2rem; }
+        .post-content h3 { font-size: 1.5rem; }
+        .post-content p {
+            margin-bottom: 1.5rem;
+        }
+        .post-content img {
+            width: 100%;
+            border-radius: var(--radius-md);
+            margin: 2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+        .post-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+        .post-content li {
+            margin-bottom: 0.5rem;
+        }
+        .post-cta {
+            background: var(--color-background);
+            padding: 2.5rem;
+            border-radius: var(--radius-md);
+            text-align: center;
+            margin-top: 3rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .post-cta h3 {
+            margin-top: 0;
+            color: var(--color-secondary);
+            font-size: 1.8rem;
+        }
+        .breadcrumb {
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .breadcrumb a {
+            color: var(--color-white);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: var(--color-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container header__container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img">
+            </a>
+            <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <nav class="nav" id="nav-menu">
+                <ul class="nav__list">
+                    <li class="nav__item"><a href="index.html#inicio" class="nav__link">Início</a></li>
+                    <li class="nav__item"><a href="index.html#acomodacoes" class="nav__link">Acomodações</a></li>
+                    <li class="nav__item"><a href="pacotes.html" class="nav__link">Pacotes</a></li>
+                    <li class="nav__item"><a href="index.html#sobre" class="nav__link">O Hotel</a></li>
+                    <li class="nav__item"><a href="estrutura.html" class="nav__link">Estrutura</a></li>
+                    <li class="nav__item"><a href="experiencias.html" class="nav__link">Experiências</a></li>
+                    <li class="nav__item"><a href="spa-detox.html" class="nav__link">SPA Solar</a></li>
+                    <li class="nav__item"><a href="eventos.html" class="nav__link">Eventos</a></li>
+                    <li class="nav__item"><a href="index.html#gastronomia" class="nav__link">Gastronomia</a></li>
+                    <li class="nav__item"><a href="blog.html" class="nav__link active">Blog</a></li>
+                </ul>
+                <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank" class="btn btn--primary nav__btn">Reservar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="post-hero">
+            <div class="post-hero__overlay"></div>
+            <div class="container post-hero__content fade-up">
+                <div class="breadcrumb">
+                    <a href="index.html">Home</a> &gt; <a href="blog.html">Blog</a> &gt; Dicas de Viagem
+                </div>
+                <div class="post-meta">
+                    <span>26 de Março, 2026</span> • <span>6 min de leitura</span> • <span>Por Geraldo Barros</span>
+                </div>
+                <h1 class="post-title">As Melhores Praias de Salinópolis: O Guia Completo para o Seu Verão</h1>
+            </div>
+        </section>
+
+        <section class="post-content fade-up">
+            <p>Quando pensamos em férias no Pará, Salinópolis – ou simplesmente Salinas – é o primeiro destino que vem à mente de milhares de viajantes. A Amazônia Atlântica nos presenteia com cenários belíssimos, mar revigorante e uma energia única. Mas, com tantas opções, surge a dúvida: <strong>qual praia escolher?</strong></p>
+            
+            <p>Seja para curtir o agito, aproveitar com as crianças ou buscar um refúgio de paz, Salinas tem uma praia para você. Neste guia, detalhamos as principais praias da cidade, os seus diferenciais e revelamos qual é a nossa favorita absoluta.</p>
+
+            <h2>1. Praia do Atalaia: O Agito e a Tradição</h2>
+            <p>A Praia do Atalaia é, sem dúvida, a mais famosa de Salinópolis. A faixa de areia é tão larga e firme que a principal característica – e atração – da praia é a entrada de carros. Sim, você pode estacionar seu veículo literalmente "pé na areia", armar a sua tenda, ligar o seu som e interagir com as grandes barracas estruturadas.</p>
+            <p>O <strong>Atalaia é para quem gosta de movimento</strong>. É lá que o agito acontece, com dezenas de restaurantes servindo peixe frito, caranguejo e aquela cerveja trincando. É perfeita para grupos de amigos e pessoas que gostam de estar no centro das atenções, pois a infraestrutura é completa e sempre há algo acontecendo.</p>
+            <img src="assets/images/atalaia-para.webp" alt="Visão aérea da Praia do Atalaia em Salinópolis, evidenciando a extensa faixa de areia e o fluxo de veículos (Foto: Agência Pará)" loading="lazy">
+
+            <h2>2. Praia do Farol Velho: Charme e Tranquilidade em Família</h2>
+            <p>Separada do Atalaia quase que apenas pela geografia (a maré junta as duas, formando uma extensa faixa contínua), a Praia do Farol Velho tem um perfil ligeiramente mais pacato. Como o próprio nome diz, ela homenageia o histórico farol da região.</p>
+            <p>É uma excelente escolha de <strong>praia para ir em família</strong>. Embora ainda conte com barracas maravilhosas, o ambiente tende a ser um pouco mais tranquilo, ideal para deixar as crianças brincarem na areia fina, formar piscinas naturais na maré baixa e tomar um banho de mar sossegado. O pôr do sol visto do Farol Velho é espetacular.</p>
+            <img src="assets/images/farol-velho-scaled.png" alt="Belezas naturais da Praia do Farol Velho em Salinópolis" loading="lazy">
+
+            <h2>3. Praia do Maçarico: O Ponto de Encontro da Noite</h2>
+            <p>A Praia do Maçarico tem um perfil diferente das outras. Principalmente porque a atração aqui não é entrar com o carro na areia, mas sim caminhar pelo seu belíssimo <strong>calçadão e orla revitalizada</strong>.</p>
+            <p>Durante o dia, o mar de águas calmas atrai banhistas que buscam tranquilidade e estrutura urbanizada. Mas é a partir do entardecer que o Maçarico brilha: a orla vira o grande ponto de encontro de Salinas. Repleta de quiosques, restaurantes para todos os gostos, artesanato local e praças bem iluminadas, caminhar pela passarela do Maçarico sentindo a brisa noturna e tomando um sorvete regional é um programa imperdível após um dia inteiro de Sal nas outras praias.</p>
+            <img src="assets/images/macarico-passarela.jpg" alt="Novas passarelas na orla da Praia do Maçarico em Salinópolis" loading="lazy">
+
+            <h2>4. Praia Ponta do Espadarte: O Paraíso Escondido (A Favorita)</h2>
+            <p>Se nas praias anteriores encontramos muita infraestrutura e badalação, na <strong>Ponta do Espadarte</strong> encontramos a verdadeira essência da natureza amazônica litorânea. Confesso: <em>essa é, sem dúvida, a minha favorita.</em></p>
+            <p><strong>Por que a Ponta do Espadarte é a melhor?</strong> Porque ela é um refúgio exclusivo. Longe das aglomerações e dos carros com som alto, a Ponta do Espadarte oferece uma areia firme e intocada, um mar limpo que convida a um mergulho longo e demorado, e uma paz indescritível.</p>
+            <img src="assets/images/espadarte-enhanced.png" alt="Beleza exuberante e águas cristalinas na Praia Ponta do Espadarte" loading="lazy">
+            <p>O acesso muitas vezes é feito via passeio de barco (pelo manguezal) ou com caminhadas estratégicas, o que já torna a experiência uma verdadeira aventura. Lá, a conexão é apenas você, o som das ondas, a brisa constante e a grandiosidade da natureza. Para quem quer <strong>renovar as energias de verdade</strong>, fugir da rotina pesada da cidade e encontrar um paraíso escondido, não existe lugar melhor em Salinópolis que a Ponta do Espadarte.</p>
+
+            <h2>5. Praia do Solar: A Nossa Praia Exclusiva</h2>
+            <p>Para fechar com chave de ouro, não poderíamos deixar de falar da apaixonante <strong>Praia do Solar</strong>. Essa é uma praia muito especial, pois ela tem vida própria: ela só se revela para nós quando a maré seca. E como o ciclo das marés muda, a nossa praia nunca tem a mesma rotina! Em alguns dias, ela surge do final da tarde para a noite; em outros, da manhã até a tarde.</p>
+            <p>É exatamente essa dinâmica que dá à Praia do Solar o seu maior charme. Por estar localizada bem em frente ao hotel e próxima ao mangue, é uma praia com acesso praticamente <strong>exclusivo para os hóspedes do Hotel Solar</strong>. É o ambiente perfeito para quem busca tranquilidade e contato total com a natureza: excelente para fazer uma boa leitura, correr na areia ou deixar as crianças brincarem livremente.</p>
+            <img src="assets/images/praia-do-solar-enhanced.png" alt="A bela e exclusiva areia da Praia do Solar em frente ao hotel" loading="lazy">
+            <p>Temos tanto orgulho desse refúgio que frequentemente realizamos <strong>eventos inesquecíveis</strong> diretamente na areia da Praia do Solar. É um privilégio que você só vive hospedando-se com a gente!</p>
+
+            <div class="post-cta">
+                <h3>Vem viver o melhor do Verão!</h3>
+                <p>O <strong>Hotel Solar</strong> fica na cidade, de frente para o mar, perto do Maçarico e em ponto estratégico para acessar qualquer uma dessas praias incríveis (nós até ajudamos você a organizar o passeio para a Ponta do Espadarte!). Relaxe na nossa piscina e no nosso SPA após um belo dia de praia.</p>
+                <a href="https://motor-de-reservas-on-line-hotel-sol.vercel.app" target="_blank" class="btn btn--primary" style="margin-top: 1rem; display: inline-block;">Reserve Agora no Hotel Solar</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer__container fade-up">
+            <div class="footer__col footer__intro">
+                <a href="#" class="logo" style="margin-bottom: 1.5rem; display: inline-block;">
+                    <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="logo__img" style="filter: brightness(0) invert(1);">
+                </a>
+                <p style="color: rgba(255,255,255,0.7); max-width: 300px; margin-bottom: 1.5rem;">O Encanto da Amazônia Atlântica. Uma experiência inesquecível em Salinópolis.</p>
+            </div>
+            <div class="footer__col">
+                <h4 class="footer__title">Contato</h4>
+                <ul class="footer__list">
+                    <li>Avenida Atlântica, s/n - Salinópolis, PA, 68721-000</li>
+                    <li>(91) 981000800</li>
+                    <li>reserva@hotelsolar.tur.br</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="container">
+                <p>&copy; 2026 Hotel Solar. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
