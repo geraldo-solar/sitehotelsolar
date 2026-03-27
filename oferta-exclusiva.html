@@ -282,10 +282,21 @@
             };
             
             try {
-                // Lógica simples de formatação de telefone e validação pode ser inserida aqui
-                
-                // Simulação de requisição na API
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Requisição real para a API do Hotel Solar (que se conecta ao Brevo)
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        email: formData.email,
+                        nome: formData.nome 
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha ao cadastrar');
+                }
                 
                 // Mostrar a mensagem de sucesso
                 document.getElementById('formContainer').style.display = 'none';

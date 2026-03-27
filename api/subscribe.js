@@ -20,7 +20,8 @@ export default async function handler(req, res) {
             body: JSON.stringify({
                 email: email,
                 listIds: [10],
-                updateEnabled: true
+                updateEnabled: true,
+                ...(req.body.nome && { attributes: { NOME: req.body.nome } })
             })
         });
 
