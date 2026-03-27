@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Garanta 10% de desconto na sua próxima reserva no Hotel Solar, em Salinópolis. Cadastre-se agora!">
+    <title>Desconto Exclusivo | Hotel Solar</title>
+    
+    <link rel="icon" type="image/png" href="assets/images/favicon.png?v=3">
+    
+    <!-- Redes Sociais / SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ganhe 10% de Desconto no Hotel Solar">
+    <meta property="og:description" content="Cadastre-se na nossa lista VIP e garanta 10% OFF na sua próxima reserva.">
+    <meta property="og:image" content="https://hotelsolar.tur.br/assets/images/reserva-1.webp">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Existentes -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    
+    <style>
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('assets/images/reserva-1.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        .landing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 40, 26, 0.7); /* color-primary com opacidade */
+            z-index: 1;
+        }
+
+        .landing-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .capture-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg, 16px);
+            padding: 3rem 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+
+        .capture-header {
+            margin-bottom: 2rem;
+        }
+
+        .capture-logo {
+            max-width: 150px;
+            margin-bottom: 1.5rem;
+        }
+
+        .capture-title {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--color-white);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
+        .capture-title span {
+            color: var(--color-secondary);
+        }
+
+        .capture-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .capture-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .input-group {
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--color-white);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .capture-input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border-radius: var(--radius-sm, 8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--color-text-main);
+            transition: all 0.3s ease;
+        }
+
+        .capture-input:focus {
+            outline: none;
+            border-color: var(--color-secondary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(230, 192, 115, 0.3);
+        }
+
+        .capture-btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            border: none;
+            border-radius: var(--radius-sm, 8px);
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            filter: brightness(1.1);
+        }
+
+        .capture-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .capture-footer {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+        
+        .capture-footer a {
+            color: var(--color-secondary);
+            text-decoration: underline;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-message {
+            display: none;
+            color: var(--color-white);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            animation: fadeUp 0.5s ease-out forwards;
+        }
+        
+        .success-message h3 {
+            color: var(--color-secondary);
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        @media screen and (max-width: 480px) {
+            .capture-card {
+                padding: 2rem 1.5rem;
+            }
+            .capture-title {
+                font-size: 1.8rem;
+            }
+            .capture-logo {
+                max-width: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body class="landing-page">
+    <div class="landing-overlay"></div>
+    
+    <div class="landing-content">
+        <div class="capture-card">
+            <div class="capture-header">
+                <a href="index.html">
+                    <img src="assets/images/logo.png" alt="Hotel Solar Logo" class="capture-logo">
+                </a>
+                <h1 class="capture-title">Ganhe <span>10% OFF</span></h1>
+                <p class="capture-subtitle">Cadastre-se na nossa lista VIP e receba um cupom exclusivo para sua primeira reserva direta no Hotel Solar.</p>
+            </div>
+            
+            <div id="formContainer">
+                <form id="landingCaptureForm" class="capture-form">
+                    <div class="input-group">
+                        <label for="nome">Como devemos te chamar?</label>
+                        <input type="text" id="nome" name="nome" class="capture-input" placeholder="Seu Nome" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="email">Seu melhor E-mail</label>
+                        <input type="email" id="email" name="email" class="capture-input" placeholder="exemplo@email.com" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="whatsapp">WhatsApp (Opcional)</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" class="capture-input" placeholder="(91) 90000-0000">
+                    </div>
+                    
+                    <button type="submit" class="capture-btn" id="submitBtn">Quero meu Desconto!</button>
+                </form>
+                
+                <p class="capture-footer">
+                    Odiamos SPAM. Seus dados estão seguros. Leia nossa <a href="politica-privacidade.html" target="_blank">Política de Privacidade</a>.
+                </p>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--color-secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <h3>Pronto!</h3>
+                <p>Confira sua caixa de entrada. Acabamos de enviar o seu acesso VIP com o cupom de 10% de desconto!</p>
+                <a href="https://reservas.hotelsolar.tur.br" class="capture-btn" style="display: inline-block; text-decoration: none; margin-top: 1.5rem;">Fazer uma Reserva</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('landingCaptureForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerText;
+            btn.innerText = 'Processando...';
+            btn.disabled = true;
+            
+            const formData = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                source: 'Instagram Landing Page'
+            };
+            
+            try {
+                // Lógica simples de formatação de telefone e validação pode ser inserida aqui
+                
+                // Simulação de requisição na API
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Mostrar a mensagem de sucesso
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Erro ao enviar:', error);
+                btn.innerText = 'Tente novamente';
+                btn.disabled = false;
+                alert('Ocorreu um erro ao processar seu cadastro. Por favor, tente novamente mais tarde.');
+            }
+        });
+    </script>
+</body>
+</html>
