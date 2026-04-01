@@ -54,13 +54,69 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 2. Send confirmation email with correct template based on payment method
+    // 2. Send confirmation email with correct template based on payment method
     let templateId = PIX_TEMPLATE_ID;
     if (paymentMethod === 'credit_card') {
       templateId = CARD_TEMPLATE_ID;
-    } else if (paymentMethod === 'pix_credit_card') {
-      templateId = HYBRID_TEMPLATE_ID;
     }
-    
+
+    const emailPayload: any = {
+      to: [
+        {
+          email,
+          name: `${firstName} ${lastName}`
+        }
+      ],
+      params: {
+        FIRSTNAME: firstName,
+        LASTNAME: lastName,
+        EMAIL: email,
+        SMS: phone || 'Não informado',
+        QUANTITY: (quantity || 1).toString(),
+        TOTAL_NIGHTS: ((quantity || 1) * 6).toString(),
+        TOTAL_VALUE: paymentMethod === 'credit_card' 
+          ? `R$ ${((quantity || 1) * 2800 * 1.10).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          : `R$ ${((quantity || 1) * 2800).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        PAYMENT_METHOD_LABEL: paymentMethod === 'pix' ? 'PIX' : paymentMethod === 'pix_credit_card' ? 'Pix e Cartão (Presencial)' : 'Cartão de Crédito',
+        INSTALLMENTS: paymentMethod === 'credit_card' 
+          ? `${installments || 1}x de R$ ${(((quantity || 1) * 2800 * 1.10) / (installments || 1)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          : paymentMethod === 'pix_credit_card' ? 'Pagamento na Recepção' : 'À vista',
+        PAYMENT_INSTRUCTIONS: paymentMethod === 'pix_credit_card'
+          ? 'Sua pré-reserva foi garantida! Por favor, dirija-se à recepção do Hotel Solar para concluir o pagamento.'
+          : paymentMethod === 'pix' 
+          ? 'Por favor, realize o pagamento via Pix e envie o comprovante.'
+          : 'Seu pagamento será processado via Cartão de Crédito.'
+      }
+    };
+
+    if (paymentMethod === 'pix_credit_card') {
+      emailPayload.subject = "Pré-reserva Garantida! Conclua na Recepção - Hotel Solar";
+      emailPayload.sender = { name: "Hotel Solar", email: "reservas@hotelsolar.tur.br" };
+      emailPayload.htmlContent = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333; border: 1px solid #ddd; border-top: 5px solid #D4AF37; border-radius: 8px;">
+          <h2 style="color: #2c4a3b; text-align: center;">Olá, {{ params.FIRSTNAME }}! Sua pré-reserva está garantida!</h2>
+          <p style="font-size: 16px; line-height: 1.5;">Ficamos muito felizes com o seu interesse na promoção imperdível <strong>Solar Sem Limites 2026</strong>.</p>
+          
+          <div style="background-color: #f8f6f0; padding: 15px; border-left: 4px solid #D4AF37; margin: 20px 0;">
+            <p style="font-size: 16px; margin: 0;"><strong>Atenção:</strong> Como você escolheu a modalidade de pagamento "<strong>{{ params.PAYMENT_METHOD_LABEL }}</strong>", nós reservamos suas datas. Agora, <strong>por favor, dirija-se imediatamente ao balcão da nossa recepção</strong>.</p>
+            <p style="font-size: 16px; margin-top: 10px; margin-bottom: 0;">Nossa equipe está preparada para fazer a cobrança do seu pacote de forma hibrída e validar suas diárias com toda a segurança.</p>
+          </div>
+          
+          <h3 style="color: #2c4a3b; margin-top: 25px;">Resumo do seu Pacote:</h3>
+          <ul style="font-size: 15px; line-height: 1.6; background: #fafafa; padding: 15px 15px 15px 35px; border-radius: 4px;">
+            <li><strong>Quantidade de Pacotes:</strong> {{ params.QUANTITY }}</li>
+            <li><strong>Total de Diárias:</strong> {{ params.TOTAL_NIGHTS }}</li>
+            <li><strong>Valor Total:</strong> {{ params.TOTAL_VALUE }}</li>
+          </ul>
+          
+          <p style="font-size: 16px; margin-top: 30px;">Estamos te esperando na recepção!</p>
+          <p style="font-size: 16px; color: #777;">Atenciosamente,<br><strong>Equipe Hotel Solar</strong></p>
+        </div>
+      `;
+    } else {
+      emailPayload.templateId = templateId;
+    }
+
     const emailResponse = await fetch(`${BREVO_API_URL}/smtp/email`, {
       method: 'POST',
       headers: {
@@ -68,35 +124,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'content-type': 'application/json',
         'api-key': BREVO_API_KEY
       },
-      body: JSON.stringify({
-        templateId,
-        to: [
-          {
-            email,
-            name: `${firstName} ${lastName}`
-          }
-        ],
-        params: {
-          FIRSTNAME: firstName,
-          LASTNAME: lastName,
-          EMAIL: email,
-          SMS: phone || 'Não informado',
-          QUANTITY: (quantity || 1).toString(),
-          TOTAL_NIGHTS: ((quantity || 1) * 6).toString(),
-          TOTAL_VALUE: paymentMethod === 'credit_card' 
-            ? `R$ ${((quantity || 1) * 2800 * 1.10).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-            : `R$ ${((quantity || 1) * 2800).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-          PAYMENT_METHOD_LABEL: paymentMethod === 'pix' ? 'PIX' : paymentMethod === 'pix_credit_card' ? 'Pix e Cartão (Presencial)' : 'Cartão de Crédito',
-          INSTALLMENTS: paymentMethod === 'credit_card' 
-            ? `${installments || 1}x de R$ ${(((quantity || 1) * 2800 * 1.10) / (installments || 1)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-            : paymentMethod === 'pix_credit_card' ? 'Pagamento na Recepção' : 'À vista',
-          PAYMENT_INSTRUCTIONS: paymentMethod === 'pix_credit_card'
-            ? 'Sua pré-reserva foi garantida! Por favor, dirija-se à recepção do Hotel Solar para concluir o pagamento.'
-            : paymentMethod === 'pix' 
-            ? 'Por favor, realize o pagamento via Pix e envie o comprovante.'
-            : 'Seu pagamento será processado via Cartão de Crédito.'
-        }
-      })
+      body: JSON.stringify(emailPayload)
     });
 
     if (!emailResponse.ok) {
