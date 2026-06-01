@@ -655,8 +655,8 @@
                             if (secondaryMatch) fileId = secondaryMatch[1];
                         }
                         if (fileId) {
-                            // Utilizando o link direto de visualização do Google Drive (evitando proxy aberto wsrv.nl)
-                            return `https://drive.google.com/uc?export=view&id=${fileId}`;
+                            // Utilizando o link do thumbnail do Google Drive que evita bloqueios e é usado no Motor
+                            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1024`;
                         }
                     }
                 }
