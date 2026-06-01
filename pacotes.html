@@ -291,6 +291,83 @@
             line-height: 1.5;
             font-weight: 500;
         }
+
+        /* Estilos do Sistema de Abas de Julho */
+        .july-tabs-container {
+            grid-column: 1 / -1;
+            margin-top: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .july-tabs-nav {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 0.5rem;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE */
+            justify-content: flex-start;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 1rem;
+        }
+
+        .july-tabs-nav::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        @media (min-width: 1024px) {
+            .july-tabs-nav {
+                justify-content: center;
+            }
+        }
+
+        .july-tab-btn {
+            white-space: nowrap;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--color-white);
+            color: var(--color-primary);
+            border: 1px solid rgba(15, 59, 33, 0.15);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .july-tab-btn:hover {
+            border-color: var(--color-secondary);
+            color: var(--color-secondary);
+            transform: translateY(-1px);
+        }
+
+        .july-tab-btn.active {
+            background: var(--color-primary);
+            color: var(--color-white);
+            border-color: var(--color-primary);
+            box-shadow: 0 10px 20px rgba(15, 59, 33, 0.15);
+        }
+
+        .july-tab-content {
+            animation: fadeInTab 0.4s ease-in-out;
+            width: 100%;
+        }
+
+        @keyframes fadeInTab {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -798,12 +875,64 @@
                     gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
                 });
 
-                // Seção de Julho embutida logicamente após
+                // Seção de Julho embutida logicamente após utilizando sistema de abas interativas
                 if (activeJulyPackages.length > 0) {
-                    gridContainer.insertAdjacentHTML('beforeend', `<div style="grid-column: 1/-1; text-align: center; margin-top: 4rem; margin-bottom: 2rem; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); padding: 3rem 2rem; border-radius: 2rem; color: white;"><span style="font-family: var(--font-heading); color: var(--color-white); font-size: 1.2rem; display: block; margin-bottom: 0.5rem; font-style: italic;">Verão Amazônico 2026</span><h2 class="section-title" style="color: white; font-size: 3rem;">Julho em Salinas</h2><div style="width: 40px; height: 2px; background: white; margin: 0 auto; border-radius: 4px;"></div><p style="margin-top:20px; color: rgba(255,255,255,0.9); max-width:600px; margin-inline:auto; font-size: 1.1rem; line-height: 1.6;">O Sol de Julho em Salinas é pura energia. Preparamos experiências exclusivas para você viver o melhor do verão no Hotel Solar.</p></div>`);
-                    activeJulyPackages.forEach((pkg) => {
-                        gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
+                    gridContainer.insertAdjacentHTML('beforeend', `
+                        <div class="july-tabs-container">
+                            <div style="text-align: center; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); padding: 3rem 2rem; border-radius: 2rem; color: white;">
+                                <span style="font-family: var(--font-heading); color: var(--color-white); font-size: 1.2rem; display: block; margin-bottom: 0.5rem; font-style: italic;">Verão Amazônico 2026</span>
+                                <h2 class="section-title" style="color: white; font-size: 3rem; margin-bottom: 1rem;">Julho em Salinas</h2>
+                                <div style="width: 40px; height: 2px; background: white; margin: 0 auto 2rem auto; border-radius: 4px;"></div>
+                                <p style="color: rgba(255,255,255,0.9); max-width:600px; margin-inline:auto; font-size: 1.1rem; line-height: 1.6;">
+                                    O Sol de Julho em Salinas é pura energia. Selecione um dos nossos pacotes exclusivos abaixo para ver a programação e garantir sua vaga.
+                                </p>
+                            </div>
+                            
+                            <div class="july-tabs-nav" id="july-tabs-nav">
+                                ${activeJulyPackages.map((pkg, idx) => {
+                                    // Pega o nome simplificado do pacote para o botão da aba
+                                    const shortName = pkg.id === 'jul-family' ? 'Semana da Família' : pkg.name.split(':')[0];
+                                    return `
+                                        <button class="july-tab-btn ${idx === 0 ? 'active' : ''}" data-pkg-id="${pkg.id}">
+                                            ${shortName}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                            
+                            <div class="july-tab-content" id="july-tab-content">
+                                <!-- Conteúdo ativo injetado aqui -->
+                            </div>
+                        </div>
+                    `);
+
+                    const tabsNav = document.getElementById('july-tabs-nav');
+                    const tabContent = document.getElementById('july-tab-content');
+
+                    const selectJulyTab = (pkgId) => {
+                        // Atualizar botões de aba
+                        document.querySelectorAll('.july-tab-btn').forEach(btn => {
+                            btn.classList.toggle('active', btn.getAttribute('data-pkg-id') === pkgId);
+                        });
+
+                        // Encontrar pacote e renderizar
+                        const selectedPkg = activeJulyPackages.find(p => p.id === pkgId);
+                        if (selectedPkg) {
+                            tabContent.innerHTML = renderCard(selectedPkg, 0, 0);
+                        }
+                    };
+
+                    // Adicionar escutador de eventos
+                    tabsNav.addEventListener('click', (e) => {
+                        const btn = e.target.closest('.july-tab-btn');
+                        if (btn) {
+                            const pkgId = btn.getAttribute('data-pkg-id');
+                            selectJulyTab(pkgId);
+                        }
                     });
+
+                    // Selecionar a primeira aba por padrão
+                    selectJulyTab(activeJulyPackages[0].id);
                 }
 
                 if (combinedArray.length === 0 && activeJulyPackages.length === 0) {
