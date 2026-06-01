@@ -195,6 +195,102 @@
             background-color: var(--color-secondary);
             color: var(--color-primary);
         }
+
+        /* Estilos da Programação Diária (Timeline) */
+        .pacote-card__schedule {
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .pacote-card__schedule-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-text-light);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pacote-card__schedule-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .pacote-card__timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .pacote-card__timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.25rem 1rem;
+            background: var(--color-background);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .pacote-card__timeline-item:hover {
+            transform: translateY(-3px);
+            background: var(--color-white);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .pacote-card__timeline-node {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--color-primary);
+            color: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 4px 10px rgba(15, 59, 33, 0.2);
+            border: 3px solid var(--color-white);
+            z-index: 2;
+        }
+
+        .pacote-card__timeline-day {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-primary);
+            background: rgba(212, 175, 55, 0.15);
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+        }
+
+        .pacote-card__timeline-label {
+            font-size: 0.95rem;
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .pacote-card__timeline-desc {
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+            line-height: 1.5;
+            font-weight: 500;
+        }
     </style>
 </head>
 
@@ -361,19 +457,44 @@
                 "end_iso_date": "2026-07-05",
                 "active": true,
                 "is_promotional": false,
-                "includes": ["Quinta-feira Welcome drink festivo", "Sexta-feira Inauguração do novo cardápio de drinks com degustação e DJ.", "Sábado comemoração de aniversário do Solar com show."]
+                "includes": [
+                    "Quinta-feira Welcome drink festivo",
+                    "Sexta-feira Inauguração do novo cardápio de drinks com degustação e DJ.",
+                    "Sábado comemoração de aniversário do Solar com show."
+                ],
+                "daily_schedule": [
+                    {
+                        "day": "Quinta",
+                        "label": "Welcome Drink",
+                        "description": "Welcome Drink comemorativo"
+                    },
+                    {
+                        "day": "Sexta",
+                        "label": "Praia & Drinks",
+                        "description": "Clubinho (10h) • Praia (13h às 18h) • DJ no Reserva Solar (14h às 19h) • Nova carta de drinks com música ao vivo (19h)"
+                    },
+                    {
+                        "day": "Sábado",
+                        "label": "Aniversário Solar",
+                        "description": "Clubinho (10h) • Praia (13h às 18h) • DJ no Reserva Solar (14h às 19h) • Brinde e Show Festivo na Pérgola (19h)"
+                    }
+                ]
             },
             {
                 "id": "jul-family",
                 "name": "Semana da Família: Domingo a Quinta",
                 "description": "O melhor custo-benefício de Julho. Aproveite diárias reduzidas durante a semana e ganhe o Jantar Cortesia (Buffet de Sopas e Massas) todas as noites para toda a sua família.",
                 "image_url": "/semana-da-familia-premium.jpg",
-                "start_iso_date": "2026-07-05", // Usado apenas p visual
+                "start_iso_date": "2026-07-05",
                 "end_iso_date": "2026-07-30",
                 "active": true,
                 "is_promotional": true,
-                "full_period_discount_pct": 0,
-                "includes": ["Jantar Cortesia Incluso", "Buffet de Sopas & Massas", "Menor Tarifa do Mês", "Recreação para Crianças"]
+                "includes": [
+                    "Jantar Cortesia Incluso",
+                    "Buffet de Sopas & Massas",
+                    "Menor Tarifa do Mês",
+                    "Recreação para Crianças"
+                ]
             },
             {
                 "id": "jul-2",
@@ -384,7 +505,28 @@
                 "end_iso_date": "2026-07-12",
                 "active": true,
                 "is_promotional": false,
-                "includes": ["Oficinas Criativas", "Check-in Animado", "Recreação Infantil"]
+                "includes": [
+                    "Oficinas Criativas",
+                    "Check-in Animado",
+                    "Recreação Infantil"
+                ],
+                "daily_schedule": [
+                    {
+                        "day": "Quinta",
+                        "label": "Welcome Drink",
+                        "description": "Welcome Drink festivo"
+                    },
+                    {
+                        "day": "Sexta",
+                        "label": "Praia & Sunset",
+                        "description": "Clubinho (10h) • Praia do Solar (10h às 13h) • DJ Sunset no Reserva Solar (15h às 20h)"
+                    },
+                    {
+                        "day": "Sábado",
+                        "label": "Vibe Reserva Solar",
+                        "description": "Clubinho (10h) • Praia do Solar (10h às 14h) • DJ (12h às 17h) • Show ao vivo (17h)"
+                    }
+                ]
             },
             {
                 "id": "jul-3",
@@ -395,7 +537,28 @@
                 "end_iso_date": "2026-07-19",
                 "active": true,
                 "is_promotional": false,
-                "includes": ["Noite Paraense", "Gincana na Piscina", "Sunset com DJ"]
+                "includes": [
+                    "Noite Paraense",
+                    "Gincana na Piscina",
+                    "Sunset com DJ"
+                ],
+                "daily_schedule": [
+                    {
+                        "day": "Quinta",
+                        "label": "Welcome Drink",
+                        "description": "Welcome Drink festivo"
+                    },
+                    {
+                        "day": "Sexta",
+                        "label": "Praia & Sunset",
+                        "description": "Clubinho (10h) • Praia do Solar (13h às 18h) • DJ Sunset no Reserva Solar (15h às 20h)"
+                    },
+                    {
+                        "day": "Sábado",
+                        "label": "Vibe Reserva Solar",
+                        "description": "Clubinho (10h) • Praia do Solar (13h às 18h) • DJ (12h às 17h) • Show ao vivo (17h)"
+                    }
+                ]
             },
             {
                 "id": "jul-4",
@@ -406,7 +569,28 @@
                 "end_iso_date": "2026-07-26",
                 "active": true,
                 "is_promotional": false,
-                "includes": ["Luau de Verão", "Show de Talentos", "Beach Tennis"]
+                "includes": [
+                    "Luau de Verão",
+                    "Show de Talentos",
+                    "Beach Tennis"
+                ],
+                "daily_schedule": [
+                    {
+                        "day": "Quinta",
+                        "label": "Welcome Drink",
+                        "description": "Welcome Drink festivo"
+                    },
+                    {
+                        "day": "Sexta",
+                        "label": "Praia & Sunset",
+                        "description": "Clubinho (10h) • Praia do Solar (10h às 13h) • DJ Sunset no Reserva Solar (15h às 20h)"
+                    },
+                    {
+                        "day": "Sábado",
+                        "label": "Vibe Reserva Solar",
+                        "description": "Clubinho (10h) • Praia do Solar (10h às 14h) • DJ (12h às 17h) • Show ao vivo (17h)"
+                    }
+                ]
             },
             {
                 "id": "jul-5",
@@ -417,7 +601,28 @@
                 "end_iso_date": "2026-08-02",
                 "active": true,
                 "is_promotional": false,
-                "includes": ["Baile de Despedida", "Fotos em Família", "Personagens Infantis"]
+                "includes": [
+                    "Baile de Despedida",
+                    "Fotos em Família",
+                    "Personagens Infantis"
+                ],
+                "daily_schedule": [
+                    {
+                        "day": "Quinta",
+                        "label": "Welcome Drink",
+                        "description": "Welcome Drink festivo"
+                    },
+                    {
+                        "day": "Sexta",
+                        "label": "Praia & Sunset",
+                        "description": "Clubinho (10h) • Praia do Solar (11h às 17h) • DJ Sunset no Reserva Solar (15h às 20h)"
+                    },
+                    {
+                        "day": "Sábado",
+                        "label": "Vibe Reserva Solar",
+                        "description": "Clubinho (10h) • Praia do Solar (11h às 17h) • DJ (12h às 17h) • Show ao vivo (17h)"
+                    }
+                ]
             }
         ];
 
@@ -495,6 +700,28 @@
                     `;
                 }
 
+                const scheduleArray = pkg.daily_schedule || pkg.dailySchedule;
+                let scheduleHTML = '';
+                if (scheduleArray && Array.isArray(scheduleArray) && scheduleArray.length > 0) {
+                    const timelineItems = scheduleArray.map((item, idx) => `
+                        <div class="pacote-card__timeline-item">
+                            <div class="pacote-card__timeline-node">${idx + 1}º</div>
+                            <span class="pacote-card__timeline-day">${item.day}</span>
+                            <h4 class="pacote-card__timeline-label">${item.label}</h4>
+                            <p class="pacote-card__timeline-desc">${item.description}</p>
+                        </div>
+                    `).join('');
+
+                    scheduleHTML = `
+                        <div class="pacote-card__schedule">
+                            <p class="pacote-card__schedule-title">Programação do Pacote</p>
+                            <div class="pacote-card__timeline">
+                                ${timelineItems}
+                            </div>
+                        </div>
+                    `;
+                }
+
                 const discountPct = pkg.fullPeriodDiscountPct || pkg.full_period_discount_pct || 0;
                 let badgeHTML = '';
                 if (discountPct > 0) {
@@ -535,7 +762,7 @@
                             </div>
                             <h3 class="pacote-card__title">${pkg.name}</h3>
                             <p class="pacote-card__desc">${pkg.description || ''}</p>
-                            ${includesHTML}
+                            ${scheduleHTML ? scheduleHTML : includesHTML}
                             <div class="pacote-card__action">
                                 <a href="${bookingUrl}" target="_blank" class="pacote-card__btn" style="display:flex; align-items:center; justify-content:center; gap: 0.5rem; letter-spacing: 0.1em; background-color: var(--color-primary); color: white;">
                                     GARANTIR MINHA VAGA
