@@ -456,184 +456,6 @@
     <!-- JavaScript do SDK do Supabase e lógica de exibição de pacotes -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Dados locais idênticos ao july_migration.json do Motor de Reservas
-        const JULY_PACKAGES_DATA = [
-            {
-                "id": "jul-1",
-                "name": "Celebração Solar: Abertura & Aniversário",
-                "description": "Damos as boas-vindas ao verão com a grande festa de aniversário do Hotel Solar. Uma celebração única com música ao vivo, coquetel especial e a energia contagiante de Salinas.",
-                "image_url": "/celebracao-solar-afonso.jpg",
-                "start_iso_date": "2026-07-02",
-                "end_iso_date": "2026-07-05",
-                "active": true,
-                "is_promotional": false,
-                "includes": [
-                    "Quinta-feira Welcome drink festivo",
-                    "Sexta-feira Música ao vivo com Afonso Cappelo às 19:00 na pérgola da piscina.",
-                    "Sábado Festival do Avuado na praia com DJ e Carimbó, e show festivo com Afonso Cappelo no Reserva Solar às 19:00."
-                ],
-                "daily_schedule": [
-                    {
-                        "day": "Quinta",
-                        "label": "Welcome Drink",
-                        "description": "Welcome Drink comemorativo"
-                    },
-                    {
-                        "day": "Sexta",
-                        "label": "Música na Piscina",
-                        "description": "Clubinho (10h) • Praia (13h às 18h) • DJ no Reserva Solar (14h às 19h) • Música ao vivo com Afonso Cappelo na Pérgola da Piscina (19:00)"
-                    },
-                    {
-                        "day": "Sábado",
-                        "label": "Festival do Avuado",
-                        "description": "Clubinho (10h) • Festival do Avuado na praia com DJ e Carimbó (a partir das 12:00) • Show Festivo com Afonso Cappelo no Reserva Solar (19:00)"
-                    }
-                ]
-            },
-            {
-                "id": "jul-family",
-                "name": "Semana da Família: Domingo a Quinta",
-                "description": "O melhor custo-benefício de Julho. Aproveite diárias reduzidas durante a semana e ganhe o Jantar Cortesia (Buffet de Sopas e Massas) todas as noites para toda a sua família.",
-                "image_url": "/semana-da-familia-premium.jpg",
-                "active": true,
-                "is_promotional": true,
-                "includes": [
-                    "Jantar Cortesia Incluso",
-                    "Buffet de Sopas & Massas",
-                    "Menor Tarifa do Mês",
-                    "Recreação para Crianças"
-                ]
-            },
-            {
-                "id": "jul-2",
-                "name": "Solarize-se: O Verão de Salinas",
-                "description": "Sinta a verdadeira energia do Sol de Salinas. Uma semana dedicada ao bem-estar e à conexão total com a natureza e quem você ama.",
-                "image_url": "/solarize-se-premium-final.jpg",
-                "start_iso_date": "2026-07-09",
-                "end_iso_date": "2026-07-12",
-                "active": true,
-                "is_promotional": false,
-                "includes": [
-                    "Oficinas Criativas",
-                    "Check-in Animado",
-                    "Recreação Infantil"
-                ],
-                "daily_schedule": [
-                    {
-                        "day": "Quinta",
-                        "label": "Welcome Drink",
-                        "description": "Welcome Drink festivo"
-                    },
-                    {
-                        "day": "Sexta",
-                        "label": "Praia & Sunset",
-                        "description": "Clubinho (10h) • Praia do Solar (10h às 13h) • DJ Sunset no Reserva Solar (15h às 20h)"
-                    },
-                    {
-                        "day": "Sábado",
-                        "label": "Vibe Reserva Solar",
-                        "description": "Clubinho (10h) • Praia do Solar (10h às 14h) • DJ (12h às 17h) • Show ao vivo (17h)"
-                    }
-                ]
-            },
-            {
-                "id": "jul-3",
-                "name": "O Auge do Verão: Parte 1",
-                "description": "O pico da temporada chegou! Viva o hotel em sua capacidade máxima de alegria, com eventos exclusivos e o melhor da nossa gastronomia regional.",
-                "image_url": "/auge-verao-parte-1-premium.jpg",
-                "start_iso_date": "2026-07-16",
-                "end_iso_date": "2026-07-19",
-                "active": true,
-                "is_promotional": false,
-                "includes": [
-                    "Noite Paraense",
-                    "Gincana na Piscina",
-                    "Sunset com DJ"
-                ],
-                "daily_schedule": [
-                    {
-                        "day": "Quinta",
-                        "label": "Welcome Drink",
-                        "description": "Welcome Drink festivo"
-                    },
-                    {
-                        "day": "Sexta",
-                        "label": "Praia & Sunset",
-                        "description": "Clubinho (10h) • Praia do Solar (13h às 18h) • DJ Sunset no Reserva Solar (15h às 20h)"
-                    },
-                    {
-                        "day": "Sábado",
-                        "label": "Vibe Reserva Solar",
-                        "description": "Clubinho (10h) • Praia do Solar (13h às 18h) • DJ (12h às 17h) • Show ao vivo (17h)"
-                    }
-                ]
-            },
-            {
-                "id": "jul-4",
-                "name": "O Auge do Verão: Parte 2",
-                "description": "A vibração máxima de Salinas continua. Atividades intensas para todas as idades criam memórias inesquecíveis à beira-mar.",
-                "image_url": "/auge-verao-parte-2-premium.jpg",
-                "start_iso_date": "2026-07-23",
-                "end_iso_date": "2026-07-26",
-                "active": true,
-                "is_promotional": false,
-                "includes": [
-                    "Luau de Verão",
-                    "Show de Talentos",
-                    "Beach Tennis"
-                ],
-                "daily_schedule": [
-                    {
-                        "day": "Quinta",
-                        "label": "Welcome Drink",
-                        "description": "Welcome Drink festivo"
-                    },
-                    {
-                        "day": "Sexta",
-                        "label": "Praia & Sunset",
-                        "description": "Clubinho (10h) • Praia do Solar (10h às 13h) • DJ Sunset no Reserva Solar (15h às 20h)"
-                    },
-                    {
-                        "day": "Sábado",
-                        "label": "Vibe Reserva Solar",
-                        "description": "Clubinho (10h) • Praia do Solar (10h às 14h) • DJ (12h às 17h) • Show ao vivo (17h)"
-                    }
-                ]
-            },
-            {
-                "id": "jul-5",
-                "name": "Bye Bye July: A Saideira",
-                "description": "A despedida em grande estilo que Salinas merece. Aproveite os últimos momentos do mês com condições especiais e muita diversão.",
-                "image_url": "/bye-bye-july-final.jpg",
-                "start_iso_date": "2026-07-30",
-                "end_iso_date": "2026-08-02",
-                "active": true,
-                "is_promotional": false,
-                "includes": [
-                    "Baile de Despedida",
-                    "Fotos em Família",
-                    "Personagens Infantis"
-                ],
-                "daily_schedule": [
-                    {
-                        "day": "Quinta",
-                        "label": "Welcome Drink",
-                        "description": "Welcome Drink festivo"
-                    },
-                    {
-                        "day": "Sexta",
-                        "label": "Praia & Sunset",
-                        "description": "Clubinho (10h) • Praia do Solar (11h às 17h) • DJ Sunset no Reserva Solar (15h às 20h)"
-                    },
-                    {
-                        "day": "Sábado",
-                        "label": "Vibe Reserva Solar",
-                        "description": "Clubinho (10h) • Praia do Solar (11h às 17h) • DJ (12h às 17h) • Show ao vivo (17h)"
-                    }
-                ]
-            }
-        ];
-
         document.addEventListener('DOMContentLoaded', async () => {
             const SUPABASE_URL = 'https://sxplhqjnalnckzijvkjm.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4cGxocWpuYWxuY2t6aWp2a2ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4MDMyMzcsImV4cCI6MjA4MzM3OTIzN30.OTHLJ7b5XWCh2N4NI7ASRTrwfE9Frn0VMJZ3PuK8EQE';
@@ -685,14 +507,11 @@
             const renderCard = (pkg, index, delayBase = 0) => {
                 const delay = (index * 100) + delayBase;
                 const imgSrc = getPublicImageUrl(pkg.imageUrl || pkg.image_url);
-                const isFamily = pkg.id === 'jul-family';
+                const inicio = formatDate(pkg.startIsoDate || pkg.start_iso_date);
+                const fim = formatDate(pkg.endIsoDate || pkg.end_iso_date);
 
-                let dateDisplay = '';
-                if (isFamily) {
-                    dateDisplay = 'ESCOLHA SUA SEMANA';
-                } else {
-                    dateDisplay = `${formatDate(pkg.startIsoDate || pkg.start_iso_date)} — ${formatDate(pkg.endIsoDate || pkg.end_iso_date)}`;
-                }
+                // Pacotes sem período fixo (ex: escolha de semana) não exibem intervalo de datas
+                const dateDisplay = (inicio && fim) ? `${inicio} — ${fim}` : 'CONSULTE AS DATAS';
 
                 const includesArray = Array.isArray(pkg.includes) ? pkg.includes : [];
                 let includesHTML = '';
@@ -797,24 +616,12 @@
                     combinedArray = [...packages];
                 }
 
-                // Injetar pacote familiar no topo se for época
-                const activeJulyPackages = JULY_PACKAGES_DATA.filter(p => p.active);
-
-                // Renderizar pacote normal do Supabase
                 let delayCounter = 0;
                 combinedArray.forEach((pkg, idx) => {
                     gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
                 });
 
-                // Seção de Julho embutida logicamente após
-                if (activeJulyPackages.length > 0) {
-                    gridContainer.insertAdjacentHTML('beforeend', `<div style="grid-column: 1/-1; text-align: center; margin-top: 4rem; margin-bottom: 2rem; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); padding: 3rem 2rem; border-radius: 2rem; color: white;"><span style="font-family: var(--font-heading); color: var(--color-white); font-size: 1.2rem; display: block; margin-bottom: 0.5rem; font-style: italic;">Verão Amazônico 2026</span><h2 class="section-title" style="color: white; font-size: 3rem;">Julho em Salinas</h2><div style="width: 40px; height: 2px; background: white; margin: 0 auto; border-radius: 4px;"></div><p style="margin-top:20px; color: rgba(255,255,255,0.9); max-width:600px; margin-inline:auto; font-size: 1.1rem; line-height: 1.6;">O Sol de Julho em Salinas é pura energia. Preparamos experiências exclusivas para você viver o melhor do verão no Hotel Solar.</p></div>`);
-                    activeJulyPackages.forEach((pkg) => {
-                        gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
-                    });
-                }
-
-                if (combinedArray.length === 0 && activeJulyPackages.length === 0) {
+                if (combinedArray.length === 0) {
                     gridContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--color-text-main); padding: 3rem;">No momento, não temos pacotes especiais ativos. Fique de olho ou entre em contato!</div>';
                 }
 
