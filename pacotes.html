@@ -610,10 +610,19 @@
                 if (error) throw error;
                 gridContainer.innerHTML = '';
 
+                // Data de hoje no fuso local, no mesmo formato das datas do pacote (YYYY-MM-DD)
+                const d = new Date();
+                const hoje = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const inicioDe = p => p.startIsoDate || p.start_iso_date || '';
+                const fimDe = p => p.endIsoDate || p.end_iso_date || '';
+
+                // Pacote encerrado sai de cartaz sozinho: oferta vencida ao lado de
+                // "Garantir minha vaga" passa a impressão de site abandonado.
                 let combinedArray = [];
                 if (packages && packages.length > 0) {
-                    packages.sort((a, b) => new Date(a.startIsoDate) - new Date(b.startIsoDate));
-                    combinedArray = [...packages];
+                    combinedArray = packages
+                        .filter(pkg => !fimDe(pkg) || fimDe(pkg) >= hoje)
+                        .sort((a, b) => inicioDe(a).localeCompare(inicioDe(b)));
                 }
 
                 let delayCounter = 0;
