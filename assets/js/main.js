@@ -127,7 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         'content-type': 'application/json'
                     },
                     body: JSON.stringify({
-                        email: emailValue
+                        email: emailValue,
+                        source: 'Site General Newsletter'
                     })
                 });
 

@@ -3,7 +3,9 @@ export default async function handler(req, res) {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
 
-    const { email } = req.body;
+    const { email, nome, listId, source } = req.body;
+    const finalSource = source || 'Site General';
+    const finalLists = listId ? [parseInt(listId)] : [10];
 
     if (!email) {
         return res.status(400).json({ message: 'O e-mail é obrigatório.' });
@@ -19,9 +21,12 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 email: email,
-                listIds: [10],
+                listIds: finalLists,
                 updateEnabled: true,
-                ...(req.body.nome && { attributes: { NOME: req.body.nome } })
+                attributes: {
+                    ...(nome && { NOME: nome }),
+                    SOURCE: finalSource
+                }
             })
         });
 
