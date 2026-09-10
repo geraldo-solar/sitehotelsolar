@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/guia", "destination": "/guia/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/guia/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    }
+  ]
+}
