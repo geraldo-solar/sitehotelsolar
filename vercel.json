@@ -1,6 +1,8 @@
 {
   "rewrites": [
-    { "source": "/guia", "destination": "/guia/index.html" }
+    { "source": "/guia", "destination": "/guia/index.html" },
+    { "source": "/solarsemlimites", "destination": "/solarsemlimites/index.html" },
+    { "source": "/solarsemlimites/", "destination": "/solarsemlimites/index.html" }
   ],
   "headers": [
     {
