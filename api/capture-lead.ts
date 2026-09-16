@@ -6,7 +6,7 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
 const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || 'geraldo@hotelsolar.tur.br';
 const SENDER_NAME = process.env.BREVO_SENDER_NAME || 'Hotel Solar';
 const PUBLIC_SITE_URL = (process.env.PUBLIC_SITE_URL || 'https://hotelsolar.tur.br/solarsemlimitescadastro').replace(/\/$/, '');
-const WHATSAPP_CHANNEL_URL = process.env.WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029VaQDL9Z5q08kV9anB80U';
+const WHATSAPP_CHANNEL_URL = process.env.WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8iEz73gvWjJea5rt3k';
 
 interface LeadBody {
   action?: 'capture' | 'profile';
