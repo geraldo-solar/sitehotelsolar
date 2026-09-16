@@ -6,6 +6,7 @@ const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
 const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || 'geraldo@hotelsolar.tur.br';
 const SENDER_NAME = process.env.BREVO_SENDER_NAME || 'Hotel Solar';
 const PUBLIC_SITE_URL = (process.env.PUBLIC_SITE_URL || 'https://hotelsolar.tur.br/solarsemlimitescadastro').replace(/\/$/, '');
+const WHATSAPP_CHANNEL_URL = process.env.WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029VaQDL9Z5q08kV9anB80U';
 
 interface LeadBody {
   action?: 'capture' | 'profile';
@@ -141,6 +142,11 @@ function confirmationEmail(firstName: string) {
               <p style="margin:28px 0">
                 <a href="${guideUrl}" style="display:inline-block;background:#0f5c45;color:#fff;text-decoration:none;font-weight:bold;padding:15px 24px;border-radius:10px">Baixar o Guia Salinas em Família</a>
               </p>
+              <div style="border:1px solid #d9e4df;background:#f4f8f6;padding:20px;margin:24px 0;border-radius:12px">
+                <strong style="font-size:17px">Acompanhe pelo Canal VIP do WhatsApp</strong>
+                <p style="font-size:15px;line-height:1.6;color:#52625e;margin:8px 0 16px">Receba os lembretes do encontro e as novidades do lançamento sem participar de grupos.</p>
+                <a href="${WHATSAPP_CHANNEL_URL}" style="display:inline-block;border:2px solid #0f5c45;color:#0f5c45;text-decoration:none;font-weight:bold;padding:12px 18px;border-radius:10px">Entrar no Canal VIP</a>
+              </div>
               <div style="border-left:4px solid #d6ad5b;background:#f7f4eb;padding:16px 18px;margin-top:26px">
                 <strong>Reserve na agenda: 24 de novembro, às 19h.</strong>
                 <p style="margin:6px 0 0;line-height:1.6;color:#52625e">Você receberá o convite para conhecer o Hotel Solar ao vivo e descobrir o que estamos preparando.</p>
