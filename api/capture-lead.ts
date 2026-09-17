@@ -4,7 +4,9 @@ import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 const BREVO_API_URL = 'https://api.brevo.com/v3';
 const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
 const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || 'geraldo@hotelsolar.tur.br';
-const SENDER_NAME = process.env.BREVO_SENDER_NAME || 'Hotel Solar';
+const SENDER_NAME = process.env.BREVO_SENDER_NAME || 'Geraldo | Hotel Solar';
+const REPLY_TO_EMAIL = process.env.BREVO_REPLY_TO_EMAIL || 'reserva@hotelsolar.tur.br';
+const REPLY_TO_NAME = process.env.BREVO_REPLY_TO_NAME || 'Reservas | Hotel Solar';
 const PUBLIC_SITE_URL = (process.env.PUBLIC_SITE_URL || 'https://hotelsolar.tur.br/solarsemlimitescadastro').replace(/\/$/, '');
 const WHATSAPP_CHANNEL_URL = process.env.WHATSAPP_CHANNEL_URL || 'https://whatsapp.com/channel/0029Vb8iEz73gvWjJea5rt3k';
 
@@ -154,11 +156,12 @@ async function notifyIntegration(body: LeadBody, capturedAt: string) {
   return 'accepted' as const;
 }
 
-function confirmationEmail(firstName: string) {
+export function confirmationEmail(firstName: string) {
   const guideUrl = `${PUBLIC_SITE_URL}/guia-salinas-em-familia.pdf`;
   const safeName = escapeHtml(firstName);
   return {
     sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+    replyTo: { name: REPLY_TO_NAME, email: REPLY_TO_EMAIL },
     to: [{ email: '', name: firstName }],
     subject: `${firstName}, seu Guia Salinas em Família chegou`,
     textContent: `Olá, ${firstName}! Seu Guia Salinas em Família: ${guideUrl}\nCanal VIP: ${WHATSAPP_CHANNEL_URL}\nVisita guiada: 24 de novembro de 2026, às 19h (horário de Belém).\nVocê recebeu esta mensagem porque solicitou o guia do Hotel Solar.`,
