@@ -110,7 +110,7 @@ async function notifyIntegration(body: LeadBody, capturedAt: string) {
 
   const isProfileEvent = body.action === 'profile';
   const eventType = isProfileEvent ? 'profile' : 'capture';
-  const eventId = `${clean(body.leadId, 100) || randomUUID()}:${eventType}`;
+  const eventId = `${clean(body.leadId, 100) || randomUUID()}:${eventType}${isProfileEvent ? `:${randomUUID()}` : ''}`;
 
   const response = await fetch(webhookUrl, {
     method: 'POST',
@@ -121,14 +121,18 @@ async function notifyIntegration(body: LeadBody, capturedAt: string) {
         : {}),
     },
     body: JSON.stringify({
+      schemaVersion: 1,
       event: isProfileEvent ? 'ssl26_lead_profiled' : 'ssl26_lead_captured',
       eventId,
       tag: 'SSL26_LEAD',
       tags: isProfileEvent ? ['SSL26_LEAD'] : ['SSL26_LEAD', 'SSL26_CAPTADO'],
       capturedAt,
+      occurredAt: new Date().toISOString(),
       consent: {
         granted: body.consent === true,
         source: 'landing_ssl26',
+        version: 'ssl26_landing_2026_09_v1',
+        text: 'Concordo em receber o guia e comunicações do Hotel Solar por e-mail e WhatsApp. Posso cancelar quando quiser.',
       },
       lead: {
         firstName: clean(body.firstName, 80),
@@ -152,6 +156,10 @@ async function notifyIntegration(body: LeadBody, capturedAt: string) {
 
   if (!response.ok) {
     throw new Error('LEAD_WEBHOOK_FAILED');
+  }
+  const acknowledgement = await response.json().catch(() => null);
+  if (acknowledgement?.success !== true || acknowledgement?.persisted !== true) {
+    throw new Error('LEAD_WEBHOOK_NOT_PERSISTED');
   }
   return 'accepted' as const;
 }
