@@ -64,6 +64,8 @@ async function brevoRequest(path: string, payload: unknown) {
     },
     body: JSON.stringify(payload),
     signal: AbortSignal.timeout(8000),
+    redirect: 'error',
+    cache: 'no-store',
   });
 
   if (!response.ok) {
@@ -71,6 +73,24 @@ async function brevoRequest(path: string, payload: unknown) {
     console.error(JSON.stringify({ message: 'Brevo request failed', path, status: response.status }));
     throw new Error('BREVO_REQUEST_FAILED');
   }
+}
+
+// Read only this submitted identity, never the whole contact database. Preserve
+// withdrawal even when a previously registered person requests the guide again.
+async function readEmailSuppression(email: string, phone: string) {
+  const response = await fetch(`${BREVO_API_URL}/contacts/${encodeURIComponent(email)}`, {
+    method: 'GET', headers: { accept: 'application/json', 'api-key': BREVO_API_KEY },
+    signal: AbortSignal.timeout(8000), redirect: 'error', cache: 'no-store',
+  });
+  if (response.status === 404) return false;
+  if (!response.ok) throw new Error('BREVO_STATE_UNAVAILABLE');
+  const contact = await response.json();
+  if (!contact || typeof contact.email !== 'string' || contact.email.toLowerCase() !== email
+    || !contact.attributes || typeof contact.attributes !== 'object' || Array.isArray(contact.attributes)
+    || (contact.attributes.SMS && normalizeBrazilianPhone(contact.attributes.SMS) !== phone)
+    || (contact.attributes.SSL26_OPT_OUT !== undefined && typeof contact.attributes.SSL26_OPT_OUT !== 'boolean')
+    || (contact.emailBlacklisted !== undefined && typeof contact.emailBlacklisted !== 'boolean')) throw new Error('BREVO_IDENTITY_REQUIRES_REVIEW');
+  return contact.attributes.SSL26_OPT_OUT === true || contact.emailBlacklisted === true;
 }
 
 type CaptureReceipt = { email: string; phone: string; firstName: string; leadId: string; capturedAt: string; expiresAt: number };
@@ -281,6 +301,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!Number.isInteger(listId) || listId <= 0) {
       return res.status(503).json({ error: 'Cadastro temporariamente indisponível.' });
     }
+    const suppressed = await readEmailSuppression(email, phone);
     const capturedAt = new Date().toISOString();
     const leadId = clean(body.leadId, 100) || randomUUID();
     const extendedAttributesEnabled = process.env.BREVO_SSL26_ATTRIBUTES_ENABLED !== 'false';
@@ -297,18 +318,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       attributes,
       updateEnabled: true,
     };
-    contactPayload.listIds = [listId];
+    if (!suppressed) contactPayload.listIds = [listId];
 
     const emailPayload = confirmationEmail(firstName);
     emailPayload.to[0].email = email;
     // Save the lead before any delivery. A secondary failure must not invite
     // resubmission of an already saved registration (and duplicate messages).
-    await brevoRequest('/contacts', contactPayload);
+    // A new form submission is not permission to reset an earlier withdrawal.
+    // Skip all Brevo writes for suppressed contacts, including consent overwrite.
+    if (!suppressed) await brevoRequest('/contacts', contactPayload);
+    // Re-read after the upsert to catch a withdrawal arriving during capture.
+    // The campaign audience must ALSO exclude SSL26_OPT_OUT=true, even if a
+    // concurrent capture temporarily restores list membership.
+    let emailSuppressed = suppressed;
+    let suppressionCheckFailed = false;
+    if (!suppressed) {
+      try { emailSuppressed = await readEmailSuppression(email, phone); }
+      catch { suppressionCheckFailed = true; }
+    }
     const [mailResult, integrationResult] = await Promise.allSettled([
-      brevoRequest('/smtp/email', emailPayload),
+      emailSuppressed || suppressionCheckFailed ? Promise.resolve() : brevoRequest('/smtp/email', emailPayload),
       notifyIntegration({ ...body, action: 'capture', firstName, email, phone, leadId }, capturedAt),
     ]);
-    const emailDelivery = mailResult.status === 'fulfilled' ? 'accepted' : 'failed';
+    const emailDelivery = emailSuppressed ? 'suppressed' : suppressionCheckFailed || mailResult.status === 'rejected' ? 'failed' : 'accepted';
     const integration = integrationResult.status === 'fulfilled' ? integrationResult.value : 'failed';
     console.log(JSON.stringify({
       level: 'info',
