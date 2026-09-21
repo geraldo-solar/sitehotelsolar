@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 
 const BREVO_API_URL = 'https://api.brevo.com/v3';
 const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
@@ -78,6 +78,7 @@ async function brevoRequest(path: string, payload: unknown) {
 // Read only this submitted identity, never the whole contact database. Preserve
 // withdrawal even when a previously registered person requests the guide again.
 async function readEmailSuppression(email: string, phone: string) {
+  const exclusionAttributes = ['SSL26_OPT_OUT', 'SSL26_QA', 'SSL26_ATENDIMENTO_PAUSA', 'SSL26_COMPRADOR'];
   const response = await fetch(`${BREVO_API_URL}/contacts/${encodeURIComponent(email)}`, {
     method: 'GET', headers: { accept: 'application/json', 'api-key': BREVO_API_KEY },
     signal: AbortSignal.timeout(8000), redirect: 'error', cache: 'no-store',
@@ -88,9 +89,11 @@ async function readEmailSuppression(email: string, phone: string) {
   if (!contact || typeof contact.email !== 'string' || contact.email.toLowerCase() !== email
     || !contact.attributes || typeof contact.attributes !== 'object' || Array.isArray(contact.attributes)
     || (contact.attributes.SMS && normalizeBrazilianPhone(contact.attributes.SMS) !== phone)
-    || (contact.attributes.SSL26_OPT_OUT !== undefined && typeof contact.attributes.SSL26_OPT_OUT !== 'boolean')
+    || exclusionAttributes.some(name => contact.attributes[name] !== undefined && typeof contact.attributes[name] !== 'boolean')
     || (contact.emailBlacklisted !== undefined && typeof contact.emailBlacklisted !== 'boolean')) throw new Error('BREVO_IDENTITY_REQUIRES_REVIEW');
-  return contact.attributes.SSL26_OPT_OUT === true || contact.emailBlacklisted === true;
+  // Existing mirrored holds block recapture; absence is NOT proof that the ERP
+  // has no hold. Central pre-send eligibility remains a release prerequisite.
+  return exclusionAttributes.some(name => contact.attributes[name] === true) || contact.emailBlacklisted === true;
 }
 
 type CaptureReceipt = { email: string; phone: string; firstName: string; leadId: string; capturedAt: string; expiresAt: number };
@@ -119,6 +122,154 @@ function readProfileToken(value: unknown): CaptureReceipt | null {
   } catch {
     return null;
   }
+}
+
+// Conversions API da Meta.
+//
+// O Pixel do navegador perde uma fatia relevante dos eventos: bloqueador de
+// anúncio, ITP do Safari/iOS e aba fechada antes do disparo. O servidor já tem
+// o lead validado na mão, então manda o mesmo evento por fora do navegador.
+//
+// Mora neste arquivo, e não num módulo próprio, porque nenhuma função de api/
+// importa arquivo vizinho hoje — e foi um import que a Vercel não conseguiu
+// resolver que derrubou as compras em produção antes. Separar não paga esse
+// risco a 35 dias da mídia paga.
+
+const META_GRAPH_URL = 'https://graph.facebook.com';
+// "Hotel Solar - Site", do portfólio Hotel Solar Salinópolis. Tem de ser o
+// MESMO de metaPixel.ts: IDs diferentes nos dois lados desligam a
+// deduplicação sem erro visível.
+const META_PIXEL_ID_PADRAO = '743518114034395';
+
+type MetaCapiResult = 'accepted' | 'failed' | 'not_configured' | 'skipped';
+
+function sha256Hex(value: string) {
+  return createHash('sha256').update(value, 'utf8').digest('hex');
+}
+
+// A Meta exige normalizar antes de gerar o hash. Se o formato variar, o hash
+// muda e o lead deixa de casar com a pessoa do outro lado.
+function hashedEmail(value: string) {
+  const normalized = value.trim().toLowerCase();
+  return normalized ? sha256Hex(normalized) : '';
+}
+
+function hashedPhone(value: string) {
+  // E.164 sem o '+': +5591988887777 vira 5591988887777.
+  const digits = value.replace(/\D/g, '');
+  return digits ? sha256Hex(digits) : '';
+}
+
+function hashedName(value: string) {
+  const normalized = value.trim().toLowerCase();
+  return normalized ? sha256Hex(normalized) : '';
+}
+
+function readCookie(cookieHeader: string, name: string) {
+  for (const part of cookieHeader.split(';')) {
+    const separator = part.indexOf('=');
+    if (separator === -1) continue;
+    if (part.slice(0, separator).trim() !== name) continue;
+    try {
+      return decodeURIComponent(part.slice(separator + 1).trim());
+    } catch {
+      return '';
+    }
+  }
+  return '';
+}
+
+// O fbclid pode chegar na query ou depois do '#': a página usa rota por hash
+// (#/lista-vip) e o anúncio cola o parâmetro no fim da URL que for usada.
+function readFbclid(pageUrl: string) {
+  try {
+    const url = new URL(pageUrl);
+    const fromQuery = url.searchParams.get('fbclid');
+    if (fromQuery) return fromQuery;
+    const marker = url.hash.indexOf('?');
+    if (marker === -1) return '';
+    return new URLSearchParams(url.hash.slice(marker + 1)).get('fbclid') || '';
+  } catch {
+    return '';
+  }
+}
+
+interface MetaLead {
+  eventId: string;
+  firstName: string;
+  email: string;
+  phone: string;
+  pageUrl: string;
+  source: string;
+  cookieHeader: string;
+  clientIp: string;
+  userAgent: string;
+  eventTimeMs: number;
+}
+
+async function notifyMeta(lead: MetaLead): Promise<MetaCapiResult> {
+  const pixelId = clean(process.env.META_PIXEL_ID, 40) || META_PIXEL_ID_PADRAO;
+  // O token é o único valor que falta configurar: sem ele, nada é enviado.
+  const token = process.env.META_CAPI_TOKEN || '';
+  if (!token) return 'not_configured';
+
+  const apiVersion = clean(process.env.META_API_VERSION, 10) || 'v21.0';
+  const testEventCode = clean(process.env.META_TEST_EVENT_CODE, 40);
+
+  const fbclid = readFbclid(lead.pageUrl);
+  const fbc = readCookie(lead.cookieHeader, '_fbc')
+    || (fbclid ? `fb.1.${lead.eventTimeMs}.${fbclid}` : '');
+  const fbp = readCookie(lead.cookieHeader, '_fbp');
+
+  const userData: Record<string, unknown> = { country: [sha256Hex('br')] };
+  const email = hashedEmail(lead.email);
+  const phone = hashedPhone(lead.phone);
+  const firstName = hashedName(lead.firstName);
+  if (email) userData.em = [email];
+  if (phone) userData.ph = [phone];
+  if (firstName) userData.fn = [firstName];
+  // fbp/fbc e IP não são hasheados: a Meta os recebe em claro por definição.
+  if (fbp) userData.fbp = fbp;
+  if (fbc) userData.fbc = fbc;
+  if (lead.clientIp) userData.client_ip_address = lead.clientIp;
+  if (lead.userAgent) userData.client_user_agent = lead.userAgent;
+
+  const response = await fetch(`${META_GRAPH_URL}/${apiVersion}/${pixelId}/events`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    // O token vai no corpo, nunca na query: URL entra em log de servidor.
+    body: JSON.stringify({
+      access_token: token,
+      ...(testEventCode ? { test_event_code: testEventCode } : {}),
+      data: [
+        {
+          event_name: 'Lead',
+          event_time: Math.floor(lead.eventTimeMs / 1000),
+          // Mesmo id que o navegador manda em fbq(..., { eventID }). Sem isso a
+          // Meta contaria o lead duas vezes e o CPL apareceria pela metade —
+          // erro que só apareceria depois da mídia paga já ter rodado.
+          event_id: lead.eventId,
+          action_source: 'website',
+          ...(lead.pageUrl ? { event_source_url: lead.pageUrl } : {}),
+          user_data: userData,
+          custom_data: { content_name: 'ssl26_novembro_2026', content_category: lead.source },
+        },
+      ],
+    }),
+    signal: AbortSignal.timeout(8000),
+    redirect: 'error',
+  });
+
+  if (!response.ok) {
+    // Só o status: o corpo de erro da Meta devolve trecho do que foi enviado.
+    console.error(JSON.stringify({
+      level: 'error',
+      message: 'Meta CAPI rejected event',
+      status: response.status,
+    }));
+    return 'failed';
+  }
+  return 'accepted';
 }
 
 async function notifyIntegration(body: LeadBody, capturedAt: string) {
@@ -336,12 +487,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       try { emailSuppressed = await readEmailSuppression(email, phone); }
       catch { suppressionCheckFailed = true; }
     }
-    const [mailResult, integrationResult] = await Promise.allSettled([
+    const [mailResult, integrationResult, metaResult] = await Promise.allSettled([
       emailSuppressed || suppressionCheckFailed ? Promise.resolve() : brevoRequest('/smtp/email', emailPayload),
       notifyIntegration({ ...body, action: 'capture', firstName, email, phone, leadId }, capturedAt),
+      // Quem pediu para sair não é enviado à Meta: consentimento retirado vale
+      // para medição também, não só para mensagem.
+      emailSuppressed
+        ? Promise.resolve('skipped' as const)
+        : notifyMeta({
+            eventId: leadId,
+            firstName,
+            email,
+            phone,
+            pageUrl: clean(body.pageUrl, 500),
+            source,
+            cookieHeader: String(req.headers.cookie || ''),
+            clientIp: String(req.headers['x-forwarded-for'] || '').split(',')[0].trim()
+              || String(req.headers['x-real-ip'] || '').trim(),
+            userAgent: String(req.headers['user-agent'] || ''),
+            eventTimeMs: Date.now(),
+          }),
     ]);
     const emailDelivery = emailSuppressed ? 'suppressed' : suppressionCheckFailed || mailResult.status === 'rejected' ? 'failed' : 'accepted';
     const integration = integrationResult.status === 'fulfilled' ? integrationResult.value : 'failed';
+    const metaCapi = metaResult.status === 'fulfilled' ? metaResult.value : 'failed';
     console.log(JSON.stringify({
       level: 'info',
       message: 'SSL26 lead captured',
@@ -349,6 +518,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       action: 'capture',
       emailDelivery,
       integration,
+      metaCapi,
       requestId,
       durationMs: Date.now() - startedAt,
     }));
