@@ -1,18 +1,30 @@
 {
   "redirects": [
     { "source": "/solarsemlimites", "destination": "/solarsemlimitescadastro", "permanent": true },
-    { "source": "/solarsemlimites/", "destination": "/solarsemlimitescadastro", "permanent": true },
-    { "source": "/solarsemlimites2026", "destination": "/solarsemlimitescadastro", "permanent": false },
-    { "source": "/solarsemlimites2026/", "destination": "/solarsemlimitescadastro", "permanent": false }
+    { "source": "/solarsemlimites/", "destination": "/solarsemlimitescadastro", "permanent": true }
   ],
   "rewrites": [
     { "source": "/guia", "destination": "/guia/index.html" },
     { "source": "/solarsemlimitescadastro", "destination": "/solarsemlimitescadastro/index.html" },
-    { "source": "/solarsemlimitescadastro/", "destination": "/solarsemlimitescadastro/index.html" }
+    { "source": "/solarsemlimitescadastro/", "destination": "/solarsemlimitescadastro/index.html" },
+    { "source": "/solarsemlimites2026", "destination": "/solarsemlimites2026/index.html" },
+    { "source": "/solarsemlimites2026/", "destination": "/solarsemlimites2026/index.html" }
   ],
   "headers": [
     {
       "source": "/guia/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/solarsemlimites2026",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/solarsemlimites2026/:path*",
       "headers": [
         { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
