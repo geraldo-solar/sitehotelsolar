@@ -54,6 +54,30 @@ function escapeHtml(value: string) {
   })[character] || character);
 }
 
+// Sem classe de proposito: `node --experimental-strip-types` (como os testes
+// rodam) nao aceita parameter property de TypeScript.
+type BrevoError = Error & { brevoCode?: string; brevoStatus?: number };
+
+function brevoError(code: string, status: number): BrevoError {
+  const error: BrevoError = new Error('BREVO_REQUEST_FAILED');
+  error.brevoCode = code;
+  error.brevoStatus = status;
+  return error;
+}
+
+// O corpo do erro do Brevo pode conter dado do contato, mas `code` é um enum
+// curto do provedor ('duplicate_parameter', 'invalid_parameter'...), sem nada
+// pessoal. Registrar só ele: sem isso, descobrir por que uma captação falhou
+// exige ir caçar no painel, contato por contato.
+async function readBrevoErrorCode(response: Response) {
+  try {
+    const body = await response.json();
+    return typeof body?.code === 'string' ? body.code.slice(0, 60) : '';
+  } catch {
+    return '';
+  }
+}
+
 async function brevoRequest(path: string, payload: unknown) {
   const response = await fetch(`${BREVO_API_URL}${path}`, {
     method: 'POST',
@@ -69,9 +93,31 @@ async function brevoRequest(path: string, payload: unknown) {
   });
 
   if (!response.ok) {
-    // Provider responses can contain contact data. Log status only.
-    console.error(JSON.stringify({ message: 'Brevo request failed', path, status: response.status }));
-    throw new Error('BREVO_REQUEST_FAILED');
+    // Provider responses can contain contact data. Log status and code only.
+    const code = await readBrevoErrorCode(response);
+    console.error(JSON.stringify({ message: 'Brevo request failed', path, status: response.status, code }));
+    throw brevoError(code, response.status);
+  }
+}
+
+// O Brevo recusa o mesmo telefone em dois contatos, e isso acontece de verdade:
+// casal que usa um número só, quem já se cadastrou antes com outro e-mail, quem
+// digita o número do cônjuge. Antes, o cadastro inteiro morria aí — sem guia,
+// sem ManyChat, sem Meta — e a tela ainda dizia "tente novamente em instantes",
+// que nunca funcionaria, porque o telefone continua sendo de outro contato.
+//
+// O telefone segue indo para o ManyChat pelo webhook, que é onde o WhatsApp
+// importa. O que se perde é o campo SMS no Brevo, não o lead.
+async function saveContact(payload: Record<string, unknown>) {
+  try {
+    await brevoRequest('/contacts', payload);
+    return 'saved' as const;
+  } catch (error) {
+    if ((error as BrevoError)?.brevoCode !== 'duplicate_parameter') throw error;
+    const attributes = { ...(payload.attributes as Record<string, string> | undefined) };
+    delete attributes.SMS;
+    await brevoRequest('/contacts', { ...payload, attributes });
+    return 'saved_without_phone' as const;
   }
 }
 
@@ -477,7 +523,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // resubmission of an already saved registration (and duplicate messages).
     // A new form submission is not permission to reset an earlier withdrawal.
     // Skip all Brevo writes for suppressed contacts, including consent overwrite.
-    if (!suppressed) await brevoRequest('/contacts', contactPayload);
+    const contactStorage = suppressed ? 'skipped' : await saveContact(contactPayload);
     // Re-read after the upsert to catch a withdrawal arriving during capture.
     // The campaign audience must ALSO exclude SSL26_OPT_OUT=true, even if a
     // concurrent capture temporarily restores list membership.
@@ -519,6 +565,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       emailDelivery,
       integration,
       metaCapi,
+      contactStorage,
       requestId,
       durationMs: Date.now() - startedAt,
     }));
