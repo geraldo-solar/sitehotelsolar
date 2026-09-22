@@ -1,7 +1,9 @@
 {
   "redirects": [
     { "source": "/solarsemlimites", "destination": "/solarsemlimitescadastro", "permanent": true },
-    { "source": "/solarsemlimites/", "destination": "/solarsemlimitescadastro", "permanent": true }
+    { "source": "/solarsemlimites/", "destination": "/solarsemlimitescadastro", "permanent": true },
+    { "source": "/solarsemlimites2026", "destination": "/solarsemlimitescadastro", "permanent": false },
+    { "source": "/solarsemlimites2026/", "destination": "/solarsemlimitescadastro", "permanent": false }
   ],
   "rewrites": [
     { "source": "/guia", "destination": "/guia/index.html" },
