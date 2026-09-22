@@ -121,6 +121,76 @@ async function saveContact(payload: Record<string, unknown>) {
   }
 }
 
+// Aviso de que um cadastro não chegou ao ManyChat.
+//
+// Essa é a única falha do fluxo que é invisível para todo mundo: o lead fica
+// salvo no Brevo, a pessoa vê sucesso na tela, e ninguém descobre que ela não
+// entrou na automação do WhatsApp — que é o canal principal da campanha.
+// Falha de e-mail, em comparação, a própria pessoa vê na tela.
+//
+// Vale um aviso a cada 30 minutos, não um por lead. Numa queda do ManyChat com
+// a campanha rodando seriam dezenas de e-mails, e alerta que chega às dezenas
+// deixa de ser lido justamente quando importa. O aviso diz onde achar todos os
+// afetados em vez de tentar listá-los.
+//
+// O contador vive na memória da instância. A Vercel reaproveita instâncias
+// quentes, então isso agrupa a maioria dos casos, mas instâncias paralelas
+// podem mandar um aviso cada. É teto aproximado, não exato — e errar para mais
+// avisos é melhor que errar para silêncio.
+const ALERT_THROTTLE_MS = 30 * 60 * 1000;
+let lastIntegrationAlertAt = 0;
+
+// Só para teste. A janela vive em memória de módulo, então sem zerar entre um
+// caso e outro o teste seguinte herdaria o silêncio do anterior e passaria a
+// verificar o limite em vez do que ele se propõe a verificar.
+export function resetIntegrationAlertThrottle() {
+  lastIntegrationAlertAt = 0;
+}
+
+async function alertIntegrationFailure(requestId: string | undefined) {
+  const recipient = clean(process.env.OPS_ALERT_EMAIL, 180) || SENDER_EMAIL;
+  if (!validEmail(recipient)) return 'not_configured' as const;
+
+  const now = Date.now();
+  if (now - lastIntegrationAlertAt < ALERT_THROTTLE_MS) return 'throttled' as const;
+  lastIntegrationAlertAt = now;
+
+  const when = new Date(now).toLocaleString('pt-BR', { timeZone: 'America/Belem' });
+  try {
+    // Sem nome, e-mail ou telefone do lead: o aviso diz onde procurar, e quem
+    // procura já tem acesso legítimo aos dados.
+    await brevoRequest('/smtp/email', {
+      sender: { name: SENDER_NAME, email: SENDER_EMAIL },
+      to: [{ email: recipient }],
+      subject: '[SSL26] Cadastro não chegou ao ManyChat',
+      textContent: [
+        `Um cadastro foi salvo no Brevo mas não chegou ao ManyChat, em ${when} (horário de Belém).`,
+        '',
+        'O que isso significa: o lead não se perdeu, está no Brevo. Mas não entrou',
+        'na automação do WhatsApp, e ninguém vai falar com ele até alguém agir.',
+        '',
+        'O que conferir: se o ManyChat está no ar e se LEAD_WEBHOOK_URL e',
+        'LEAD_WEBHOOK_TOKEN continuam válidos.',
+        '',
+        'Como achar todos os afetados: nos logs da Vercel do projeto sitehotelsolar,',
+        'procurar por "integration":"failed" na rota /api/capture-lead. Cada linha',
+        'tem o requestId do cadastro correspondente.',
+        '',
+        `Referência deste: ${clean(requestId, 200) || 'sem requestId'}`,
+        '',
+        'Outros cadastros podem ter falhado sem gerar novo aviso: há um limite de um',
+        'aviso a cada 30 minutos para o alerta não virar enxurrada durante uma queda.',
+      ].join('\n'),
+    });
+    return 'sent' as const;
+  } catch {
+    // Zerar o contador: se o próprio aviso falhou, a próxima captação tenta de
+    // novo em vez de ficar 30 minutos em silêncio achando que avisou.
+    lastIntegrationAlertAt = 0;
+    return 'failed' as const;
+  }
+}
+
 // Read only this submitted identity, never the whole contact database. Preserve
 // withdrawal even when a previously registered person requests the guide again.
 async function readContactState(email: string, phone: string) {
@@ -604,6 +674,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const emailDelivery = emailSuppressed ? 'suppressed' : suppressionCheckFailed || mailResult.status === 'rejected' ? 'failed' : 'accepted';
     const integration = integrationResult.status === 'fulfilled' ? integrationResult.value : 'failed';
     const metaCapi = metaResult.status === 'fulfilled' ? metaResult.value : 'failed';
+    // O aviso nunca derruba a captação: o cadastro já está salvo, e falhar em
+    // avisar sobre um problema não pode virar um segundo problema.
+    const integrationAlert = integration === 'failed'
+      ? await alertIntegrationFailure(requestId).catch(() => 'failed' as const)
+      : 'not_needed';
     console.log(JSON.stringify({
       level: 'info',
       message: 'SSL26 lead captured',
@@ -611,6 +686,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       action: 'capture',
       emailDelivery,
       integration,
+      integrationAlert,
       metaCapi,
       contactStorage,
       requestId,
