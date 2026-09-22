@@ -35,6 +35,10 @@
     {
       "source": "/api/solar-status",
       "destination": "https://solar-sem-limites.vercel.app/api/solar-status"
+    },
+    {
+      "source": "/api/solar-erp-sync",
+      "destination": "https://solar-sem-limites.vercel.app/api/solar-erp-sync"
     }
   ],
   "headers": [
