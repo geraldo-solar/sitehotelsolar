@@ -123,23 +123,37 @@ async function saveContact(payload: Record<string, unknown>) {
 
 // Read only this submitted identity, never the whole contact database. Preserve
 // withdrawal even when a previously registered person requests the guide again.
-async function readEmailSuppression(email: string, phone: string) {
+async function readContactState(email: string, phone: string) {
   const exclusionAttributes = ['SSL26_OPT_OUT', 'SSL26_QA', 'SSL26_ATENDIMENTO_PAUSA', 'SSL26_COMPRADOR'];
   const response = await fetch(`${BREVO_API_URL}/contacts/${encodeURIComponent(email)}`, {
     method: 'GET', headers: { accept: 'application/json', 'api-key': BREVO_API_KEY },
     signal: AbortSignal.timeout(8000), redirect: 'error', cache: 'no-store',
   });
-  if (response.status === 404) return false;
+  if (response.status === 404) return { suppressed: false, phoneMismatch: false };
   if (!response.ok) throw new Error('BREVO_STATE_UNAVAILABLE');
   const contact = await response.json();
   if (!contact || typeof contact.email !== 'string' || contact.email.toLowerCase() !== email
     || !contact.attributes || typeof contact.attributes !== 'object' || Array.isArray(contact.attributes)
-    || (contact.attributes.SMS && normalizeBrazilianPhone(contact.attributes.SMS) !== phone)
     || exclusionAttributes.some(name => contact.attributes[name] !== undefined && typeof contact.attributes[name] !== 'boolean')
     || (contact.emailBlacklisted !== undefined && typeof contact.emailBlacklisted !== 'boolean')) throw new Error('BREVO_IDENTITY_REQUIRES_REVIEW');
+
+  // Telefone diferente do guardado: pode ser a mesma pessoa com número novo, ou
+  // alguém digitando o e-mail de outra. A decisão de supressão continua valendo
+  // — ela é pelo e-mail, e o e-mail bateu. O que não se faz é sobrescrever o
+  // telefone guardado.
+  //
+  // Antes isso derrubava o cadastro inteiro com "tente novamente em instantes",
+  // que nunca funcionaria: quem trocou de número ficava travado para sempre, sem
+  // ter como adivinhar que precisava digitar o telefone antigo.
+  const phoneMismatch = Boolean(contact.attributes.SMS)
+    && normalizeBrazilianPhone(contact.attributes.SMS) !== phone;
+
   // Existing mirrored holds block recapture; absence is NOT proof that the ERP
   // has no hold. Central pre-send eligibility remains a release prerequisite.
-  return exclusionAttributes.some(name => contact.attributes[name] === true) || contact.emailBlacklisted === true;
+  const suppressed = exclusionAttributes.some(name => contact.attributes[name] === true)
+    || contact.emailBlacklisted === true;
+
+  return { suppressed, phoneMismatch };
 }
 
 type CaptureReceipt = { email: string; phone: string; firstName: string; leadId: string; capturedAt: string; expiresAt: number };
@@ -462,12 +476,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const profileAttribute = clean(process.env.BREVO_PROFILE_ATTRIBUTE || 'SSL26_PROFILE', 50);
+      // A captura não grava nada no Brevo de quem pediu para sair. A etapa de
+      // perfil precisa da mesma regra, senão vira a porta dos fundos: o mesmo
+      // contato entraria por aqui. Sem certeza do estado, não grava — a resposta
+      // ainda segue para o ManyChat, que é o destino que importa.
+      let profileStorage = 'skipped';
       if (profileAttribute) {
-        await brevoRequest('/contacts', {
-          email,
-          attributes: { [profileAttribute]: clean(body.profile, 40) },
-          updateEnabled: true,
-        });
+        let profileSuppressed = true;
+        try { profileSuppressed = (await readContactState(email, receipt.phone)).suppressed; }
+        catch { profileSuppressed = true; }
+        if (!profileSuppressed) {
+          await brevoRequest('/contacts', {
+            email,
+            attributes: { [profileAttribute]: clean(body.profile, 40) },
+            updateEnabled: true,
+          });
+          profileStorage = 'saved';
+        }
       }
 
       const integration = await notifyIntegration({ ...body, ...receipt, consent: true }, receipt.capturedAt)
@@ -478,6 +503,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         route: '/api/capture-lead',
         action: 'profile',
         integration,
+        profileStorage,
         requestId,
         durationMs: Date.now() - startedAt,
       }));
@@ -498,12 +524,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!Number.isInteger(listId) || listId <= 0) {
       return res.status(503).json({ error: 'Cadastro temporariamente indisponível.' });
     }
-    const suppressed = await readEmailSuppression(email, phone);
+    const contactState = await readContactState(email, phone);
+    const suppressed = contactState.suppressed;
     const capturedAt = new Date().toISOString();
     const leadId = clean(body.leadId, 100) || randomUUID();
     const extendedAttributesEnabled = process.env.BREVO_SSL26_ATTRIBUTES_ENABLED !== 'false';
     const source = clean(body.utmSource, 100) || (clean(body.referral, 100) ? 'indicacao' : 'direto');
-    const attributes: Record<string, string> = { FIRSTNAME: firstName, SMS: phone };
+    const attributes: Record<string, string> = {};
+    // Identidade só é gravada quando o telefone confere com o que já está
+    // guardado. Havendo divergência, o contato necessariamente já existe e já
+    // tem nome — e um cadastro que não bate com o registro não sobrescreve nome
+    // nem telefone de ninguém. A atribuição de campanha abaixo ainda é gravada,
+    // e o número novo segue para o ManyChat pelo webhook, que é onde o WhatsApp
+    // importa; o que fica desatualizado é o campo SMS no Brevo.
+    if (!contactState.phoneMismatch) {
+      attributes.FIRSTNAME = firstName;
+      attributes.SMS = phone;
+    }
     if (extendedAttributesEnabled) {
       attributes.SSL26_SOURCE = source;
       attributes.SSL26_CAMPAIGN = clean(body.utmCampaign, 100);
@@ -523,14 +560,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // resubmission of an already saved registration (and duplicate messages).
     // A new form submission is not permission to reset an earlier withdrawal.
     // Skip all Brevo writes for suppressed contacts, including consent overwrite.
-    const contactStorage = suppressed ? 'skipped' : await saveContact(contactPayload);
+    let contactStorage: string = 'skipped';
+    if (!suppressed) {
+      contactStorage = await saveContact(contactPayload);
+      // Distinguir no log as duas razões de o telefone não ter sido gravado:
+      // conflito recusado pelo Brevo, ou divergência que decidimos não sobrescrever.
+      if (contactState.phoneMismatch && contactStorage === 'saved') contactStorage = 'saved_phone_mismatch';
+    }
     // Re-read after the upsert to catch a withdrawal arriving during capture.
     // The campaign audience must ALSO exclude SSL26_OPT_OUT=true, even if a
     // concurrent capture temporarily restores list membership.
     let emailSuppressed = suppressed;
     let suppressionCheckFailed = false;
     if (!suppressed) {
-      try { emailSuppressed = await readEmailSuppression(email, phone); }
+      try { emailSuppressed = (await readContactState(email, phone)).suppressed; }
       catch { suppressionCheckFailed = true; }
     }
     const [mailResult, integrationResult, metaResult] = await Promise.allSettled([
@@ -538,7 +581,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       notifyIntegration({ ...body, action: 'capture', firstName, email, phone, leadId }, capturedAt),
       // Quem pediu para sair não é enviado à Meta: consentimento retirado vale
       // para medição também, não só para mensagem.
-      emailSuppressed
+      //
+      // O mesmo vale quando não deu para reconfirmar o estado no Brevo. Se a
+      // dúvida basta para segurar um e-mail que a pessoa pediu, basta para não
+      // mandar os dados dela a uma plataforma de anúncio.
+      emailSuppressed || suppressionCheckFailed
         ? Promise.resolve('skipped' as const)
         : notifyMeta({
             eventId: leadId,
