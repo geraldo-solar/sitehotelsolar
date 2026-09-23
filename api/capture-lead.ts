@@ -147,7 +147,7 @@ export function resetIntegrationAlertThrottle() {
   lastIntegrationAlertAt = 0;
 }
 
-async function alertIntegrationFailure(requestId: string | undefined) {
+async function alertIntegrationFailure(requestId: string | undefined, centralFirst = false) {
   const recipient = clean(process.env.OPS_ALERT_EMAIL, 180) || SENDER_EMAIL;
   if (!validEmail(recipient)) return 'not_configured' as const;
 
@@ -164,10 +164,13 @@ async function alertIntegrationFailure(requestId: string | undefined) {
       to: [{ email: recipient }],
       subject: '[SSL26] Cadastro não chegou ao ManyChat',
       textContent: [
-        `Um cadastro foi salvo no Brevo mas não chegou ao ManyChat, em ${when} (horário de Belém).`,
+        centralFirst ? `Um cadastro ficou sem confirmação do ERP, em ${when} (horário de Belém).`
+          : `Um cadastro foi salvo no Brevo mas não chegou ao ManyChat, em ${when} (horário de Belém).`,
         '',
-        'O que isso significa: o lead não se perdeu, está no Brevo. Mas não entrou',
-        'na automação do WhatsApp, e ninguém vai falar com ele até alguém agir.',
+        centralFirst ? 'Não presumir cadastro salvo ou envio realizado: confira o recibo no ERP antes de repetir.'
+          : 'O que isso significa: o lead não se perdeu, está no Brevo. Mas não entrou',
+        centralFirst ? 'Inclusão na lista e e-mail ao visitante foram retidos por segurança.'
+          : 'na automação do WhatsApp, e ninguém vai falar com ele até alguém agir.',
         '',
         'O que conferir: se o ManyChat está no ar e se LEAD_WEBHOOK_URL e',
         'LEAD_WEBHOOK_TOKEN continuam válidos.',
@@ -227,6 +230,32 @@ async function readContactState(email: string, phone: string) {
 }
 
 type CaptureReceipt = { email: string; phone: string; firstName: string; leadId: string; capturedAt: string; expiresAt: number };
+
+// Private ERP check, immediately before list inclusion and delivery. The
+// provider mirror alone can lag behind a withdrawal, support pause or purchase.
+export async function centralEmailEligibility(email: string, phone: string): Promise<'eligible' | 'blocked' | 'review'> {
+  if (process.env.SSL26_CENTRAL_ELIGIBILITY_ENABLED !== 'true') return 'review';
+  try {
+    const target = new URL(process.env.LEAD_WEBHOOK_URL || '');
+    const secret = process.env.LEAD_WEBHOOK_TOKEN || '';
+    if (target.protocol !== 'https:' || target.username || target.password || target.search || target.hash
+      || target.pathname !== '/api/ssl26/ingest' || secret.length < 32) return 'review';
+    target.pathname = '/api/ssl26/eligibility';
+    const requestId = randomUUID(), started = Date.now();
+    const response = await fetch(target, {
+      method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${secret}` },
+      body: JSON.stringify({ requestId, purpose: 'capture_email', email, phone }),
+      signal: AbortSignal.timeout(8000), redirect: 'error', cache: 'no-store',
+    });
+    if (!response.ok) return 'review';
+    const result = await response.json(), checked = Date.parse(result?.checkedAt);
+    if (result?.success !== true || result?.requestId !== requestId
+      || !Number.isFinite(checked) || checked < started - 1000 || checked > Date.now() + 1000 || Date.now() - checked > 5000
+      || !['eligible','blocked','review'].includes(result?.decision)
+      || process.env.SSL26_CENTRAL_ELIGIBILITY_ENABLED !== 'true') return 'review';
+    return result.decision;
+  } catch { return 'review'; }
+}
 
 function signReceipt(payload: string) {
   return createHmac('sha256', BREVO_API_KEY).update(`ssl26-profile-v1:${payload}`).digest('base64url');
@@ -553,8 +582,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       let profileStorage = 'skipped';
       if (profileAttribute) {
         let profileSuppressed = true;
-        try { profileSuppressed = (await readContactState(email, receipt.phone)).suppressed; }
+        try {
+          const state = await readContactState(email, receipt.phone);
+          profileSuppressed = state.suppressed
+            || (process.env.SSL26_CENTRAL_ELIGIBILITY_ENABLED === 'true' && state.phoneMismatch);
+        }
         catch { profileSuppressed = true; }
+        if (process.env.SSL26_CENTRAL_ELIGIBILITY_ENABLED === 'true' && !profileSuppressed) {
+          profileSuppressed = await centralEmailEligibility(email, receipt.phone) !== 'eligible';
+        }
         if (!profileSuppressed) {
           await brevoRequest('/contacts', {
             email,
@@ -595,9 +631,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(503).json({ error: 'Cadastro temporariamente indisponível.' });
     }
     const contactState = await readContactState(email, phone);
-    const suppressed = contactState.suppressed;
     const capturedAt = new Date().toISOString();
     const leadId = clean(body.leadId, 100) || randomUUID();
+    const centralEnabled = process.env.SSL26_CENTRAL_ELIGIBILITY_ENABLED === 'true';
+    // Persist the exact identity before querying it. In this mode an uncertain
+    // ERP receipt cannot fall back to sending or subscribing only in Brevo.
+    const earlyIntegration = centralEnabled
+      ? await notifyIntegration({ ...body, action: 'capture', firstName, email, phone, leadId }, capturedAt).catch(() => 'failed' as const)
+      : undefined;
+    if (centralEnabled && earlyIntegration !== 'accepted') {
+      // No durable receipt and no Brevo write: never claim a saved registration.
+      // The UI retains the form. A retry reuses its lead ID; no automatic retry.
+      await alertIntegrationFailure(requestId, true);
+      console.error(JSON.stringify({ level: 'warn', message: 'SSL26 registration not confirmed',
+        route: '/api/capture-lead', requestId, integration: earlyIntegration }));
+      return res.status(503).json({ error: 'Não conseguimos confirmar seu cadastro agora. Tente novamente em instantes.', integration: 'failed' });
+    }
+    const centralBeforeSave = !centralEnabled ? 'eligible' : earlyIntegration === 'accepted'
+      ? await centralEmailEligibility(email, phone) : 'review';
+    const suppressed = contactState.suppressed || centralBeforeSave === 'blocked';
+    const centralReview = centralBeforeSave === 'review' || (centralEnabled && contactState.phoneMismatch);
     const extendedAttributesEnabled = process.env.BREVO_SSL26_ATTRIBUTES_ENABLED !== 'false';
     const source = clean(body.utmSource, 100) || (clean(body.referral, 100) ? 'indicacao' : 'direto');
     const attributes: Record<string, string> = {};
@@ -622,7 +675,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       attributes,
       updateEnabled: true,
     };
-    if (!suppressed) contactPayload.listIds = [listId];
+    if (!suppressed && !centralReview) contactPayload.listIds = [listId];
 
     const emailPayload = confirmationEmail(firstName);
     emailPayload.to[0].email = email;
@@ -631,7 +684,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // A new form submission is not permission to reset an earlier withdrawal.
     // Skip all Brevo writes for suppressed contacts, including consent overwrite.
     let contactStorage: string = 'skipped';
-    if (!suppressed) {
+    if (!suppressed && !centralReview) {
       contactStorage = await saveContact(contactPayload);
       // Distinguir no log as duas razões de o telefone não ter sido gravado:
       // conflito recusado pelo Brevo, ou divergência que decidimos não sobrescrever.
@@ -641,14 +694,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // The campaign audience must ALSO exclude SSL26_OPT_OUT=true, even if a
     // concurrent capture temporarily restores list membership.
     let emailSuppressed = suppressed;
-    let suppressionCheckFailed = false;
-    if (!suppressed) {
+    let suppressionCheckFailed = centralReview;
+    if (!suppressed && !centralReview) {
       try { emailSuppressed = (await readContactState(email, phone)).suppressed; }
       catch { suppressionCheckFailed = true; }
     }
+    if (centralEnabled && !emailSuppressed && !suppressionCheckFailed) {
+      const beforeDelivery = await centralEmailEligibility(email, phone);
+      emailSuppressed = beforeDelivery === 'blocked';
+      suppressionCheckFailed = beforeDelivery === 'review';
+    }
     const [mailResult, integrationResult, metaResult] = await Promise.allSettled([
       emailSuppressed || suppressionCheckFailed ? Promise.resolve() : brevoRequest('/smtp/email', emailPayload),
-      notifyIntegration({ ...body, action: 'capture', firstName, email, phone, leadId }, capturedAt),
+      centralEnabled ? Promise.resolve(earlyIntegration!)
+        : notifyIntegration({ ...body, action: 'capture', firstName, email, phone, leadId }, capturedAt),
       // Quem pediu para sair não é enviado à Meta: consentimento retirado vale
       // para medição também, não só para mensagem.
       //
@@ -677,7 +736,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // O aviso nunca derruba a captação: o cadastro já está salvo, e falhar em
     // avisar sobre um problema não pode virar um segundo problema.
     const integrationAlert = integration === 'failed'
-      ? await alertIntegrationFailure(requestId).catch(() => 'failed' as const)
+      ? await alertIntegrationFailure(requestId, centralEnabled).catch(() => 'failed' as const)
       : 'not_needed';
     console.log(JSON.stringify({
       level: 'info',

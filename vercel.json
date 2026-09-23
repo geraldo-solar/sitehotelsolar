@@ -37,6 +37,10 @@
       "destination": "https://solar-sem-limites.vercel.app/api/solar-status"
     },
     {
+      "source": "/api/ssl26-checkout",
+      "destination": "https://solar-sem-limites.vercel.app/api/ssl26-checkout"
+    },
+    {
       "source": "/api/solar-erp-sync",
       "destination": "https://solar-sem-limites.vercel.app/api/solar-erp-sync"
     }
