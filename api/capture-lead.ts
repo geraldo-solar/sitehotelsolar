@@ -691,12 +691,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (contactState.phoneMismatch && contactStorage === 'saved') contactStorage = 'saved_phone_mismatch';
     }
     // Re-read after the upsert to catch a withdrawal arriving during capture.
-    // The campaign audience must ALSO exclude SSL26_OPT_OUT=true, even if a
-    // concurrent capture temporarily restores list membership.
+    // The campaign audience must ALSO exclude every SSL26 hold, even if a
+    // concurrent capture temporarily restores list membership. Recheck identity
+    // too: a provider phone change must not pass using the earlier snapshot.
     let emailSuppressed = suppressed;
     let suppressionCheckFailed = centralReview;
     if (!suppressed && !centralReview) {
-      try { emailSuppressed = (await readContactState(email, phone)).suppressed; }
+      try {
+        const currentContactState = await readContactState(email, phone);
+        emailSuppressed = currentContactState.suppressed;
+        suppressionCheckFailed = centralEnabled && currentContactState.phoneMismatch;
+      }
       catch { suppressionCheckFailed = true; }
     }
     if (centralEnabled && !emailSuppressed && !suppressionCheckFailed) {
