@@ -10,6 +10,14 @@
       function gtag() { dataLayer.push(arguments); }
       gtag('js', new Date());
       gtag('config', 'G-0TN73829QP');
+      gtag('config', 'AW-754939028');
+      // Clique em link do WhatsApp conta como conversão no Google Ads.
+      document.addEventListener('click', function (e) {
+          var link = e.target.closest && e.target.closest('a[href*="wa.me/"], a[href*="api.whatsapp.com/"]');
+          if (!link) return;
+          gtag('event', 'clique_whatsapp', { local: location.pathname });
+          gtag('event', 'conversion', { send_to: 'AW-754939028/zBWXCMyUqo4dEJTp_ecC' });
+      });
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
