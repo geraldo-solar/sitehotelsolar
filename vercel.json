@@ -9,6 +9,16 @@
       "source": "/solarsemlimites/",
       "destination": "/solarsemlimitescadastro",
       "permanent": true
+    },
+    {
+      "source": "/solarsemlimites2026",
+      "destination": "/solarsemlimites2027",
+      "permanent": true
+    },
+    {
+      "source": "/solarsemlimites2026/",
+      "destination": "/solarsemlimites2027",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -25,11 +35,11 @@
       "destination": "/solarsemlimitescadastro/index.html"
     },
     {
-      "source": "/solarsemlimites2026",
+      "source": "/solarsemlimites2027",
       "destination": "/solarsemlimites2026/index.html"
     },
     {
-      "source": "/solarsemlimites2026/",
+      "source": "/solarsemlimites2027/",
       "destination": "/solarsemlimites2026/index.html"
     },
     {
@@ -48,6 +58,15 @@
   "headers": [
     {
       "source": "/guia/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/solarsemlimites2027",
       "headers": [
         {
           "key": "X-Robots-Tag",
