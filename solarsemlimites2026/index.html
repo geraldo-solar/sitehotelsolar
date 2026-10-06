@@ -11,12 +11,12 @@
       gtag('js', new Date());
       gtag('config', 'G-0TN73829QP');
       gtag('config', 'AW-754939028');
-      // Clique em link do WhatsApp conta como conversão no Google Ads.
+      // Na página de vendas, o clique no WhatsApp é registrado no Analytics,
+      // mas não conta como conversão do Google Ads (decisão de 06/10/2026).
       document.addEventListener('click', function (e) {
           var link = e.target.closest && e.target.closest('a[href*="wa.me/"], a[href*="api.whatsapp.com/"]');
           if (!link) return;
           gtag('event', 'clique_whatsapp', { local: location.pathname });
-          gtag('event', 'conversion', { send_to: 'AW-754939028/zBWXCMyUqo4dEJTp_ecC' });
       });
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -99,7 +99,7 @@
       }
     </style>
 
-  <script type="module" crossorigin src="/solarsemlimites2026/assets/index-Be9ZT0D_.js"></script>
+  <script type="module" crossorigin src="/solarsemlimites2026/assets/index-DUw39Ad9.js"></script>
 </head>
   <body class="bg-solar-cream text-solar-deep">
     <div id="root"></div>
