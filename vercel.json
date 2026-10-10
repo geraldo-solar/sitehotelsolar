@@ -53,6 +53,18 @@
     {
       "source": "/api/solar-erp-sync",
       "destination": "https://solar-sem-limites.vercel.app/api/solar-erp-sync"
+    },
+    {
+      "source": "/vip",
+      "destination": "/vip/index.html"
+    },
+    {
+      "source": "/vip/",
+      "destination": "/vip/index.html"
+    },
+    {
+      "source": "/api/lista-vip",
+      "destination": "https://solar-sem-limites.vercel.app/api/lista-vip"
     }
   ],
   "headers": [
