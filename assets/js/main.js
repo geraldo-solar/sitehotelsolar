@@ -174,14 +174,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     var T = {
         vip: {
-            longo: '<strong>Solar Sem Limites 2027</strong> · Visita guiada ao vivo em 24/11, às 19h · <span class="ssl27-faixa__cta">Entre na Lista VIP →</span>',
-            curto: '<strong>Solar Sem Limites 2027</strong> · <span class="ssl27-faixa__cta">Entre na Lista VIP →</span>',
+            longo: '<strong>Solar Sem Limites 2027</strong> · Visita guiada ao vivo em 24/11, às 19h <span class="ssl27-faixa__cta">Entre na Lista VIP →</span>',
+            curto: '<strong>Solar Sem Limites 2027</strong> <span class="ssl27-faixa__cta">Lista VIP →</span>',
+            seloTag: 'Novidade',
+            selo: '<strong>Solar Sem Limites 2027</strong> · visita guiada ao vivo em 24/11, às 19h →',
             botao: 'Entrar na Lista VIP',
             fechamento: 'Valores e detalhes na visita guiada ao vivo, em 24/11, às 19h.'
         },
         vendas: {
-            longo: '<strong>Solar Sem Limites 2027</strong> · Vendas abertas até 01/12, às 23h59 · <span class="ssl27-faixa__cta">Conheça o pacote →</span>',
-            curto: '<strong>Solar Sem Limites 2027</strong> · <span class="ssl27-faixa__cta">Vendas até 01/12 →</span>',
+            longo: '<strong>Solar Sem Limites 2027</strong> · Vendas abertas até 01/12, às 23h59 <span class="ssl27-faixa__cta">Conheça o pacote →</span>',
+            curto: '<strong>Solar Sem Limites 2027</strong> <span class="ssl27-faixa__cta">Vendas até 01/12 →</span>',
+            seloTag: 'Vendas abertas',
+            selo: '<strong>Solar Sem Limites 2027</strong> · até 01/12, às 23h59 →',
             botao: 'Conhecer o pacote',
             fechamento: 'Vendas abertas até 01/12, às 23h59.'
         }
@@ -214,7 +218,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Home: o convite entra no lugar da newsletter, e o cartão em Pacotes.
+        // Home: selo acima do título do hero.
+        var heroTitulo = document.querySelector('#inicio .hero__title');
+        if (heroTitulo) {
+            var selo = document.createElement('a');
+            selo.className = 'ssl27-hero-selo';
+            selo.href = link('hero');
+            selo.innerHTML = '<span class="ssl27-hero-selo__tag">' + T.seloTag + '</span>' +
+                '<span class="ssl27-hero-selo__longo">' + T.selo + '</span>' +
+                '<span class="ssl27-hero-selo__curto"><strong>Solar Sem Limites 2027</strong> →</span>';
+            heroTitulo.parentNode.insertBefore(selo, heroTitulo);
+            document.body.classList.add('com-selo-ssl27');
+        }
+
+        // Home: o convite logo abaixo do hero (a newsletter some) e o cartão em Pacotes.
         document.querySelectorAll('[data-ssl27]').forEach(function (el) { el.hidden = false; });
         document.querySelectorAll('[data-ssl27-esconder]').forEach(function (el) { el.hidden = true; });
         document.querySelectorAll('[data-ssl27-link]').forEach(function (el) {
