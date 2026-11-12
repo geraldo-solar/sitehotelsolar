@@ -153,3 +153,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+// ==========================================
+//  Solar Sem Limites 2027: chamada temporária (12/11 a 01/12/2026)
+//  Até 25/11, às 8h (Belém), leva para a Lista VIP; até 01/12, às 23h59,
+//  para a página de vendas; depois disso, some sozinha e a home volta a
+//  mostrar a newsletter. Para conferir uma fase: ?ssl27=vip | vendas | fim
+// ==========================================
+(function () {
+    var ABRE_VENDAS = Date.UTC(2026, 10, 25, 11, 0, 0); // 25/11/2026, 8h em Belém
+    var FECHA = Date.UTC(2026, 11, 2, 3, 0, 0);         // 01/12/2026, 23h59 em Belém
+    var teste = (location.search.match(/[?&]ssl27=(vip|vendas|fim)(&|$)/) || [])[1];
+    var agora = Date.now();
+    var fase = teste || (agora >= FECHA ? 'fim' : agora >= ABRE_VENDAS ? 'vendas' : 'vip');
+    if (fase === 'fim') return;
+
+    var destino = fase === 'vip' ? '/vip' : '/solarsemlimites2027';
+    var link = function (meio) {
+        return destino + '?utm_source=site&utm_medium=' + meio + '&utm_campaign=ssl27_site';
+    };
+    var T = {
+        vip: {
+            longo: '<strong>Solar Sem Limites 2027</strong> · Visita guiada ao vivo em 24/11, às 19h · <span class="ssl27-faixa__cta">Entre na Lista VIP →</span>',
+            curto: '<strong>Solar Sem Limites 2027</strong> · <span class="ssl27-faixa__cta">Entre na Lista VIP →</span>',
+            botao: 'Entrar na Lista VIP',
+            fechamento: 'Valores e detalhes na visita guiada ao vivo, em 24/11, às 19h.'
+        },
+        vendas: {
+            longo: '<strong>Solar Sem Limites 2027</strong> · Vendas abertas até 01/12, às 23h59 · <span class="ssl27-faixa__cta">Conheça o pacote →</span>',
+            curto: '<strong>Solar Sem Limites 2027</strong> · <span class="ssl27-faixa__cta">Vendas até 01/12 →</span>',
+            botao: 'Conhecer o pacote',
+            fechamento: 'Vendas abertas até 01/12, às 23h59.'
+        }
+    }[fase];
+
+    var iniciar = function () {
+        // Faixa no topo de todas as páginas que carregam este arquivo.
+        var fechada = false;
+        try { fechada = sessionStorage.getItem('ssl27_faixa_fechada') === '1'; } catch (e) { }
+        if (!fechada) {
+            var faixa = document.createElement('div');
+            faixa.className = 'ssl27-faixa';
+            faixa.setAttribute('role', 'region');
+            faixa.setAttribute('aria-label', 'Solar Sem Limites 2027');
+            faixa.innerHTML = '<a class="ssl27-faixa__link" href="' + link('faixa') + '">' +
+                '<span class="ssl27-faixa__longo">' + T.longo + '</span>' +
+                '<span class="ssl27-faixa__curto">' + T.curto + '</span></a>' +
+                '<button type="button" class="ssl27-faixa__fechar" aria-label="Fechar aviso">×</button>';
+            document.body.insertBefore(faixa, document.body.firstChild);
+            document.body.classList.add('com-faixa-ssl27');
+            var ajustar = function () {
+                document.documentElement.style.setProperty('--faixa-ssl27', faixa.offsetHeight + 'px');
+            };
+            ajustar();
+            window.addEventListener('resize', ajustar);
+            faixa.querySelector('.ssl27-faixa__fechar').addEventListener('click', function () {
+                faixa.remove();
+                document.body.classList.remove('com-faixa-ssl27');
+                try { sessionStorage.setItem('ssl27_faixa_fechada', '1'); } catch (e) { }
+            });
+        }
+
+        // Home: o convite entra no lugar da newsletter, e o cartão em Pacotes.
+        document.querySelectorAll('[data-ssl27]').forEach(function (el) { el.hidden = false; });
+        document.querySelectorAll('[data-ssl27-esconder]').forEach(function (el) { el.hidden = true; });
+        document.querySelectorAll('[data-ssl27-link]').forEach(function (el) {
+            el.href = link(el.getAttribute('data-ssl27-link'));
+        });
+        document.querySelectorAll('[data-ssl27-texto]').forEach(function (el) {
+            el.textContent = T[el.getAttribute('data-ssl27-texto')];
+        });
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', iniciar);
+    } else {
+        iniciar();
+    }
+})();

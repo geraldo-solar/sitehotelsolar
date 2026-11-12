@@ -1101,3 +1101,204 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* ==========================================
+   Solar Sem Limites 2027: chamada temporária do site (12/11 a 01/12/2026)
+   Ligada por assets/js/main.js; tudo some sozinho depois de 01/12, às 23h59
+   (horário de Belém). Sem JavaScript, nada disso aparece.
+   ========================================== */
+[data-ssl27][hidden],
+[data-ssl27-esconder][hidden] {
+    display: none !important;
+}
+
+.ssl27-faixa {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    line-height: 1.35;
+    box-shadow: 0 1px 0 rgba(212, 175, 55, 0.35);
+}
+
+.ssl27-faixa__link {
+    display: block;
+    padding: 0.6rem 3rem;
+    text-align: center;
+    color: var(--color-white);
+    text-decoration: none;
+}
+
+.ssl27-faixa__link strong {
+    color: var(--color-secondary);
+    font-weight: 600;
+}
+
+.ssl27-faixa__cta {
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+}
+
+.ssl27-faixa__curto {
+    display: none;
+}
+
+.ssl27-faixa__fechar {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.4rem;
+    line-height: 1;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+}
+
+.ssl27-faixa__fechar:hover {
+    color: var(--color-white);
+}
+
+body.com-faixa-ssl27 {
+    padding-top: var(--faixa-ssl27, 40px);
+}
+
+body.com-faixa-ssl27 .header {
+    top: var(--faixa-ssl27, 40px);
+}
+
+.ssl27-home {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 5rem 1.5rem;
+}
+
+.ssl27-home__caixa {
+    max-width: 1040px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    align-items: center;
+}
+
+.ssl27-home__foto img {
+    display: block;
+    width: 100%;
+    height: 460px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+}
+
+.ssl27-home__selo {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-secondary);
+}
+
+.ssl27-home h2 {
+    margin: 0 0 1rem;
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    line-height: 1.15;
+    color: var(--color-white);
+}
+
+.ssl27-home__texto {
+    margin: 0 0 0.9rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.ssl27-home__chamada {
+    margin: 0 0 1.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--color-white);
+}
+
+.ssl27-home__itens {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+}
+
+.ssl27-home__itens li {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.ssl27-home__itens li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-secondary);
+    font-weight: 700;
+}
+
+.ssl27-home__fechamento {
+    margin: 0 0 1.5rem;
+    font-weight: 600;
+    color: #F3E8D2;
+}
+
+.ssl27-home__rodape {
+    margin: 1.25rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.ssl27-cartao {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .ssl27-faixa {
+        font-size: 0.82rem;
+    }
+
+    .ssl27-faixa__link {
+        padding: 0.55rem 2.5rem 0.55rem 1rem;
+    }
+
+    .ssl27-faixa__longo {
+        display: none;
+    }
+
+    .ssl27-faixa__curto {
+        display: inline;
+    }
+
+    .ssl27-home {
+        padding: 3.5rem 1.25rem;
+    }
+
+    .ssl27-home__caixa {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .ssl27-home__foto img {
+        height: 240px;
+    }
+
+    .ssl27-home h2 {
+        font-size: 1.8rem;
+    }
+}
