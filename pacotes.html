@@ -122,6 +122,59 @@
             flex-direction: column;
         }
 
+        /* Pacote da vez: o mais próximo da data ganha destaque, porque a maior
+           parte das vendas de feriado acontece na última semana. */
+        .pacote-card--destaque {
+            border: 2px solid var(--color-secondary);
+            box-shadow: 0 25px 50px -12px rgba(15, 59, 33, 0.35);
+        }
+
+        .pacote-card__destaque {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: -2rem -2rem 1.5rem;
+            padding: 0.85rem 1rem;
+            background: var(--color-primary);
+            color: var(--color-secondary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .pacote-card__destaque strong {
+            color: var(--color-white, #fff);
+        }
+
+        .pacote-card__contagem {
+            margin-left: 0.25rem;
+            background: var(--color-primary);
+            color: var(--color-white, #fff);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 900px) {
+            .pacote-card--destaque {
+                grid-column: 1 / -1;
+                flex-direction: row;
+            }
+
+            .pacote-card--destaque .pacote-card__image {
+                flex: 0 0 50%;
+                padding-bottom: 0;
+                min-height: 460px;
+            }
+        }
+
         .pacote-card__dates {
             display: inline-flex;
             align-items: center;
@@ -512,8 +565,32 @@
                 return `${date.getDate().toString().padStart(2, '0')} ${meses[date.getMonth()]}`;
             };
 
-            const renderCard = (pkg, index, delayBase = 0) => {
+            // Quantos dias faltam para o pacote começar, em datas locais (YYYY-MM-DD).
+            // Só vira chamada de urgência dentro de 30 dias: é nessa janela que sai
+            // quase toda a venda de feriado; antes disso, "faltam 95 dias" não ajuda.
+            const contagemRegressiva = (inicioIso, hojeIso) => {
+                if (!inicioIso || !hojeIso) return '';
+                const paraData = iso => {
+                    const [a, m, d] = iso.split('-').map(Number);
+                    return new Date(a, m - 1, d);
+                };
+                const dias = Math.round((paraData(inicioIso) - paraData(hojeIso)) / 86400000);
+                if (dias < 0) return 'Acontecendo agora';
+                if (dias === 0) return 'Começa hoje';
+                if (dias === 1) return 'Começa amanhã';
+                if (dias <= 30) return `Faltam ${dias} dias`;
+                return '';
+            };
+
+            const renderCard = (pkg, index, delayBase = 0, destaque = false, hoje = '') => {
                 const delay = (index * 100) + delayBase;
+                const contagem = contagemRegressiva(pkg.startIsoDate || pkg.start_iso_date, hoje);
+                const destaqueHTML = destaque ? `
+                            <div class="pacote-card__destaque">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <span>Próximo pacote</span>${contagem ? `<span aria-hidden="true">·</span><strong>${contagem}</strong>` : ''}
+                            </div>` : '';
+                const contagemHTML = (!destaque && contagem) ? `<span class="pacote-card__contagem">${contagem}</span>` : '';
                 const imgSrc = getPublicImageUrl(pkg.imageUrl || pkg.image_url);
                 const inicio = formatDate(pkg.startIsoDate || pkg.start_iso_date);
                 const fim = formatDate(pkg.endIsoDate || pkg.end_iso_date);
@@ -579,13 +656,14 @@
                 }
 
                 return `
-                    <div class="pacote-card fade-up" style="transition-delay: ${delay}ms; opacity: 1; transform: translateY(0); ${pkg.isPromotional || pkg.is_promotional ? 'border: 2px solid var(--color-primary); box-shadow: 0 10px 30px rgba(15, 59, 33, 0.15);' : ''}">
+                    <div class="pacote-card fade-up${destaque ? ' pacote-card--destaque' : ''}" style="transition-delay: ${delay}ms; opacity: 1; transform: translateY(0); ${!destaque && (pkg.isPromotional || pkg.is_promotional) ? 'border: 2px solid var(--color-primary); box-shadow: 0 10px 30px rgba(15, 59, 33, 0.15);' : ''}">
                         <div class="pacote-card__image">
-                            <img src="${imgSrc}" alt="${pkg.name}" loading="lazy" onerror="this.src='assets/images/logo.png'">
+                            <img src="${imgSrc}" alt="${pkg.name}" ${destaque ? 'fetchpriority="high"' : 'loading="lazy"'} onerror="this.src='assets/images/logo.png'">
                             <div class="pacote-card__overlay"></div>
                             ${badgeHTML}
                         </div>
                         <div class="pacote-card__content">
+                            ${destaqueHTML}
                             <div class="pacote-card__dates" style="background-color: rgba(230, 192, 115, 0.1); border: 1px solid rgba(230, 192, 115, 0.3); border-radius: 8px; padding: 0.5rem 1rem;">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -594,6 +672,7 @@
                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                 </svg>
                                 <strong>${dateDisplay.toUpperCase()}</strong>
+                                ${contagemHTML}
                             </div>
                             <h3 class="pacote-card__title">${pkg.name}</h3>
                             <p class="pacote-card__desc">${pkg.description || ''}</p>
@@ -634,8 +713,9 @@
                 }
 
                 let delayCounter = 0;
+                // O primeiro da lista (o mais próximo) é o pacote da vez e ganha destaque.
                 combinedArray.forEach((pkg, idx) => {
-                    gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++));
+                    gridContainer.insertAdjacentHTML('beforeend', renderCard(pkg, delayCounter++, 0, idx === 0, hoje));
                 });
 
                 if (combinedArray.length === 0) {
